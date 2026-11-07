@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <style>[hidden]{display:none!important}</style>
 <title>SIGNPOST</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M12 3v18M8 21h8' stroke='%23161616'/%3E%3Cpath d='M5 6h11l3 2.5-3 2.5H5z' stroke='%23c4573a'/%3E%3Cpath d='M19 13H8l-3 2.5L8 18h11z' stroke='%232f6aa3'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
 <style>
@@ -27,7 +28,8 @@ body{background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:15p
 a{color:inherit;text-decoration:none}
 a:focus-visible,button:focus-visible,input:focus-visible,tr:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
 .top{max-width:1040px;margin:0 auto;display:flex;align-items:center;gap:24px;padding-block:12px;border-bottom:1px solid var(--rule)}
-.wordmark{font-size:15px;font-weight:600;letter-spacing:.06em}
+.wordmark{font-size:15px;font-weight:600;letter-spacing:.06em;display:inline-flex;align-items:center;gap:9px}
+.wordmark .logo{width:22px;height:22px;flex:none}
 .wordmark small{font-family:var(--sans);font-size:10.5px;font-weight:500;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-left:10px;vertical-align:3px}
 .top .sbox{margin-left:auto;width:min(340px,48vw)}
 main{max-width:1040px;margin:0 auto;padding-block:72px 120px;min-height:60vh}
@@ -190,7 +192,7 @@ svg .row{cursor:pointer}
 </head>
 <body>
 <header class="top">
-  <a class="wordmark" href="#home">SIGNPOST<small>Signed gene effects</small></a>
+  <a class="wordmark" href="#home" aria-label="SIGNPOST home"><svg class="logo" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v18M8 21h8" style="stroke:var(--ink)"/><path d="M5 6h11l3 2.5-3 2.5H5z" style="stroke:var(--up)"/><path d="M19 13H8l-3 2.5L8 18h11z" style="stroke:var(--down)"/></svg>SIGNPOST</a>
   <nav class="tnav"><a href="#about">About</a></nav>
   <div class="sbox" id="topsearch"><input id="q2" type="search" placeholder="Search a gene or trait" autocomplete="off" aria-label="Search a gene or trait"></div>
 </header>
