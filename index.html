@@ -210,19 +210,20 @@ const pct=(v,d=1)=>v==null?"–":(v*100).toFixed(d).replace(/\.0$/,"")+"%";
 const tier=pw=>pw<=.10?"High confidence":pw<=.20?"Moderate confidence":pw<=.30?"Low confidence":"Close to a coin flip";
 const obs=pw=>{for(const [t,o] of OBS) if(pw<=t) return o; return "about 45%"};
 const P=a=>({t:a[0],g:a[1],s:a[2],pw:a[3],src:a[4],pc:a[5],loc:a[6],cls:a[7],lof:a[8],ev:a[9].map(v=>v==null?[null,null]:[Math.sign(v),Math.abs(v)/1000]),bu:a[10]==null?null:[Math.sign(a[10]),Math.abs(a[10])/1000],sh:null});
-const DET={}; const loadDetail=t=>DET[t%D.nshard]||(DET[t%D.nshard]=fetch(`d/${String(t%D.nshard).padStart(2,"0")}.json`).then(r=>r.ok?r.json():null).catch(()=>null));
+const BUILD="2026-11-08b";   // cache-busting for the data files: trait indices change between builds, so a stale shard would not match core.json
+const DET={}; const loadDetail=t=>DET[t%D.nshard]||(DET[t%D.nshard]=fetch(`d/${String(t%D.nshard).padStart(2,"0")}.json?v=${BUILD}`).then(r=>r.ok?r.json():null).catch(()=>null));
 const STAGE_L=s=>s>=4?"Approved":s>=3?"Phase 3":s>=2.5?"Phase 2/3":s>=2?"Phase 2":s>=1.5?"Phase 1/2":s>=1?"Phase 1":s>=.5?"Early phase 1":"Preclinical";
 const drugOf=g=>D.drugs?D.drugs[g]:null;
 function rx(g){const d=drugOf(g); if(!d) return "";
   const tip=`<b>${d[0]>=4?"Approved drug target":"Clinical-stage drug target"}</b><br>`+d[2].slice(0,5).map(([n,a,s])=>`${esc(n)} · ${esc(a)} · ${STAGE_L(s)}`).join("<br>")+(d[1]>5?`<br>+${d[1]-5} more`:"");
   return `<span class="rx ${d[0]>=4?"ap":""}" data-tip="${esc(tip)}">${d[0]>=4?"Drug":"Trial"}</span>`}
-let UNI=null; const loadUni=()=>UNI||(UNI=fetch("uniprot.json").then(r=>r.ok?r.json():null).catch(()=>null));
+let UNI=null; const loadUni=()=>UNI||(UNI=fetch("uniprot.json?v="+BUILD).then(r=>r.ok?r.json():null).catch(()=>null));
 function cross(t,g){return ((D.matches||{})[t]||[]).map(j=>pairKey.get(j+"|"+g)).filter(Boolean).map(P).sort((a,b)=>a.pw-b.pw)}
 function crossCell(p){const X=cross(p.t,p.g); if(!X.length) return `<span style="color:var(--faint)">–</span>`;
   const k=X.filter(x=>x.s===p.s).length, tip=X.map(x=>`${esc(D.traits[x.t].cohort)} · ${esc(D.traits[x.t].name)} · ${x.s>0?"▲":"▼"} ${pct(x.pw)}`).join("<br>");
   return `<span class="xc num ${k===X.length?"all":k===0?"none":""}" data-tip="<b>Same gene, matching traits in other cohorts</b><br>${esc(tip)}">${k===X.length?"✓":k===0?"✗":"~"} ${k}/${X.length}</span>`}
 const SRCV={"Fine-mapped eQTL":"--c-eq","TWAS":"--c-tw","SMR + HEIDI":"--c-smr","Borzoi":"--c-bz","pQTL":"--c-pq","Coding variant":"--c-cd","Recalibrated minimum":"--c-min"};
-let ABOUT=null; const loadAbout=()=>ABOUT||(ABOUT=fetch("about.json").then(r=>r.ok?r.json():null).catch(()=>null));
+let ABOUT=null; const loadAbout=()=>ABOUT||(ABOUT=fetch("about.json?v="+BUILD).then(r=>r.ok?r.json():null).catch(()=>null));
 const pc0=v=>Math.round(v*100)+"%";
 function lineChart(host,cfg){const W=1040,H=cfg.h||400,ml=56,mr=190,mt=14,mb=50,pw=W-ml-mr,ph=H-mt-mb;
   const X=v=>ml+(v-cfg.xd[0])/(cfg.xd[1]-cfg.xd[0])*pw, Y=v=>mt+(1-(v-cfg.yd[0])/(cfg.yd[1]-cfg.yd[0]))*ph;
@@ -257,17 +258,17 @@ function aboutPage(){
     <dt>Cohorts</dt><dd>Pan-UKB (158 traits), FinnGen R12 (207 endpoints) and a batch of 92 Open Targets studies. All of Us is used only to check accuracy.</dd>
   </dl></section>
   <section class="sec"><h2>Accuracy for gene-trait sign prediction across three cohorts</h2>
-    <p class="note">AUC of each source's P(wrong) for a wrong sign at common regulatory loci, against gene-burden signs, with the gene held out from training. All of Us is scored with models trained without its genes.</p>
+    <p class="note">AUC of each source's P(wrong) for a wrong sign at common regulatory loci, against gene-burden signs, with the gene's locus held out from training. All of Us is scored with models trained without its genes.</p>
     <div class="fig"><div class="aucg" id="aucg"></div><div class="legend"><span><svg width="12" height="12" style="vertical-align:middle;margin-right:6px"><circle cx="6" cy="6" r="5" style="fill:var(--c-min)"/></svg>P(wrong) model, 95% bootstrap interval</span><span><svg width="12" height="12" style="vertical-align:middle;margin-right:6px"><path d="M2 2L10 10M10 2L2 10" style="stroke:var(--muted);stroke-width:1.6"/></svg>Raw strength of the source</span></div></div></section>
   <section class="sec"><h2>False sign rate against P(wrong)</h2>
-    <p class="note">943 burden-labelled pairs at common regulatory loci, Pan-UKB, FinnGen and All of Us pooled. Each source's pairs are ranked by its raw strength or by its model's P(wrong); the curve is the false sign rate of the pairs selected so far.</p>
+    <p class="note">1,487 burden-labelled pairs at common regulatory loci with a qualifying lead, Pan-UKB, FinnGen and All of Us pooled, locus held out. Each source's pairs are ranked by its raw strength or by its model's P(wrong); the curve is the false sign rate of the pairs selected so far.</p>
     <div class="fig"><div class="ctl"><span class="tabs" id="fsrt"><button class="chip" data-v="Raw method">Raw strength</button><button class="chip on" data-v="SIGNPOST">SIGNPOST P(wrong)</button></span></div><div id="fsrc"></div></div></section>
   <section class="sec"><h2>Causal gene ranking at burden-gene loci</h2>
     <p class="note">Loci that contain a gene with a significant gene-burden result, held out by genomic block. Rank: share of loci where that gene is among the top k candidates. Calibration: predicted P(causal) against the observed share of burden genes among candidates.</p>
     <div class="fig"><div class="ctl"><span class="tabs" id="cvt"><button class="chip on" data-v="rank">Rank</button><button class="chip" data-v="cal">Calibration</button></span><span class="tabs" id="cct"><button class="chip on" data-v="Pan-UKB">Pan-UKB</button><button class="chip" data-v="FinnGen">FinnGen</button></span></div><div id="causc"></div><p class="cap" id="causcap"></p></div></section>
   <section class="sec"><h2>Drug target consistency with predicted sign</h2>
-    <p class="note">Drugs on their targets at common regulatory loci, indication one of the trait's own disease terms, Pan-UKB, FinnGen and the Open Targets batch pooled, burden-labelled pairs excluded. A target is consistent when the drug's action, applied to the predicted direction, moves the trait the way the indication wants. Targets ranked by P(causal) × P(right); 95% Wilson band.</p>
-    <div class="fig"><div class="ctl"><span class="tabs" id="drt"><button class="chip on" data-v="approved">Approved drugs</button><button class="chip" data-v="all">All drugs, phase 2+</button></span></div><div id="drugc"></div><p class="cap" id="drugcap">With burden-known signs in place of the predicted ones, approved drugs agree 89% and trial-stage drugs 61%, so the approved set is the informative one; trial-stage drugs mostly add label noise.</p></div></section>
+    <p class="note">Drugs on their targets at common regulatory loci, indication one of the trait's own disease terms, Pan-UKB, FinnGen and the Open Targets batch pooled, burden-labelled pairs excluded. A target is consistent when the drug's action, applied to the predicted direction, moves the trait the way the indication wants. Targets ranked by P(causal) × P(right); 95% Wilson bands.</p>
+    <div class="fig"><div id="drugc"></div><p class="cap" id="drugcap">With burden-known signs in place of the predicted ones, approved drugs agree 89% and trial-stage drugs 61%, so the approved set is the informative one; trial-stage drugs mostly add label noise.</p></div></section>
   <section class="sec"><h2>Data</h2><p>GWAS summary statistics from Pan-UKB, FinnGen R12 and the GWAS Catalog through Open Targets; eQTL, pQTL and colocalisation resources as described in the methods; drug mechanisms and clinical stages from Open Targets (ChEMBL); protein function summaries from UniProt (CC BY 4.0). Prototype for research use only; not for clinical decisions.</p></section></div>`;
   loadAbout().then(A=>{if(!A){app.insertAdjacentHTML("beforeend",`<p class="note">The figure data did not load.</p>`);return}
     // 1. AUC
@@ -307,11 +308,10 @@ function aboutPage(){
     $("#cct").addEventListener("click",e=>{const b=e.target.closest("button"); if(!b) return; $("#cct").querySelectorAll(".chip").forEach(x=>x.classList.toggle("on",x===b)); cc=b.dataset.v; drawC()});
     // 3. drug
     const D2=A.drug,mk=(k,name,c,w)=>({name,c,w,x:D2[k].n.map(v=>v/D2[k].N),y:D2[k].p,lo:D2[k].lo,hi:D2[k].hi,n:D2[k].n,N:D2[k].N,endNote:`${D2[k].N} · ${pc0(D2[k].p[D2[k].p.length-1])}`});
-    let dk="approved"; const drawD=()=>lineChart($("#drugc"),{label:"Drug target consistency",h:400,xd:[0,1],yd:[.2,1],xt:[0,.25,.5,.75,1],yt:[.2,.3,.4,.5,.6,.7,.8,.9,1],fx:pc0,fy:pc0,refs:[{y:.5,label:"chance"}],
-      xl:"% of drug targets, most confident first",yl:"% of targets consistent with drug effect",
-      series:[mk(dk,dk==="approved"?"Approved drugs":"All drugs, phase 2+","--c-min",3)],
+    lineChart($("#drugc"),{label:"Drug target consistency",h:400,xd:[0,1],yd:[.2,1],xt:[0,.25,.5,.75,1],yt:[.2,.3,.4,.5,.6,.7,.8,.9,1],fx:pc0,fy:pc0,refs:[{y:.5,label:"chance"}],
+      xl:"% of each curve's drug targets, most confident first",yl:"% of targets consistent with drug effect",
+      series:[mk("approved","Approved drugs","--c-min",3),mk("all","All drugs, phase 2+","--c-new",2)],
       head:xv=>`${pc0(xv)} of targets selected`,row:(se,i)=>`<span style="color:var(${se.c})">●</span> ${esc(se.name)}: ${pc0(se.y[i])} consistent (${pc0(se.lo[i])}–${pc0(se.hi[i])}), top ${se.n[i]} of ${se.N}`});
-    drawD(); $("#drt").addEventListener("click",e=>{const b=e.target.closest("button"); if(!b) return; $("#drt").querySelectorAll(".chip").forEach(x=>x.classList.toggle("on",x===b)); dk=b.dataset.v; drawD()});
   })}
 function indMark(g,p){const d=drugOf(g); if(!d||!(((D.indic||{})[g])||[]).includes(p.t)) return null; if(D.traits[p.t].kind!=="b"||!d[3]||d[3].length!==1) return {m:"•",ok:null};
   return d[3][0]*p.s<0?{m:"✓",ok:true}:{m:"✗",ok:false}}
@@ -490,7 +490,7 @@ function route(){const h=decodeURIComponent(location.hash.slice(1)); window.scro
 document.addEventListener("mouseover",e=>{const el=e.target.closest("[data-tip]"),tp=$("#tip"); if(!el){tp.hidden=true;return} tp.innerHTML=el.dataset.tip; tp.hidden=false});
 document.addEventListener("mousemove",e=>{const tp=$("#tip"); if(tp.hidden) return; const x=Math.min(e.clientX+14,innerWidth-tp.offsetWidth-8),y=e.clientY+16+tp.offsetHeight>innerHeight?e.clientY-tp.offsetHeight-10:e.clientY+16; tp.style.left=x+"px"; tp.style.top=y+"px"});
 
-fetch("core.json").then(r=>{if(!r.ok) throw new Error(r.status); return r.json()}).then(d=>{D=d;
+fetch("core.json?v="+BUILD).then(r=>{if(!r.ok) throw new Error(r.status); return r.json()}).then(d=>{D=d;
   byT=D.traits.map(()=>[]); D.pairs.forEach(a=>{byT[a[0]].push(a); if(!byG.has(a[1])) byG.set(a[1],[]); byG.get(a[1]).push(a); pairKey.set(a[0]+"|"+a[1],a)});
   D.traits.forEach((T,i)=>tIdx.set(T.id,i)); D.genes.forEach((G,i)=>{if(byG.has(i)||!gIdx.has(G[0])) gIdx.set(G[0],i)});
   wireSearch($("#topsearch")); addEventListener("hashchange",route); route()})
