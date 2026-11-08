@@ -266,8 +266,8 @@ function aboutPage(){
     <p class="note">Loci that contain a gene with a significant gene-burden result, held out by genomic block. Rank: share of loci where that gene is among the top k candidates. Calibration: predicted P(causal) against the observed share of burden genes among candidates.</p>
     <div class="fig"><div class="ctl"><span class="tabs" id="cvt"><button class="chip on" data-v="rank">Rank</button><button class="chip" data-v="cal">Calibration</button></span><span class="tabs" id="cct"><button class="chip on" data-v="Pan-UKB">Pan-UKB</button><button class="chip" data-v="FinnGen">FinnGen</button></span></div><div id="causc"></div><p class="cap" id="causcap"></p></div></section>
   <section class="sec"><h2>Drug target consistency with predicted sign</h2>
-    <p class="note">Approved drugs on their targets at common regulatory loci, indication one of the trait's own disease terms, Pan-UKB, FinnGen and the Open Targets batch pooled, burden-labelled pairs excluded. A target is consistent when the drug's action, applied to the predicted direction, moves the trait the way the indication wants. Targets ranked by P(causal) × P(right) for the current model and by P(wrong) for the previous one; 95% Wilson bands.</p>
-    <div class="fig"><div id="drugc"></div><p class="cap">Targets ranked by P(causal) × P(right) for the current model, and by P(wrong) for the previous model on the same targets. Burden-known signs reach 89% on this test, the ceiling set by the drug labels.</p></div></section>
+    <p class="note">Drugs on their targets at common regulatory loci, indication one of the trait's own disease terms, Pan-UKB, FinnGen and the Open Targets batch pooled, burden-labelled pairs excluded. A target is consistent when the drug's action, applied to the predicted direction, moves the trait the way the indication wants. Targets ranked by P(causal) × P(right); 95% Wilson band.</p>
+    <div class="fig"><div class="ctl"><span class="tabs" id="drt"><button class="chip on" data-v="approved">Approved drugs</button><button class="chip" data-v="all">All drugs, phase 2+</button></span></div><div id="drugc"></div><p class="cap" id="drugcap">With burden-known signs in place of the predicted ones, approved drugs agree 89% and trial-stage drugs 61%, so the approved set is the informative one; trial-stage drugs mostly add label noise.</p></div></section>
   <section class="sec"><h2>Data</h2><p>GWAS summary statistics from Pan-UKB, FinnGen R12 and the GWAS Catalog through Open Targets; eQTL, pQTL and colocalisation resources as described in the methods; drug mechanisms and clinical stages from Open Targets (ChEMBL); protein function summaries from UniProt (CC BY 4.0). Prototype for research use only; not for clinical decisions.</p></section></div>`;
   loadAbout().then(A=>{if(!A){app.insertAdjacentHTML("beforeend",`<p class="note">The figure data did not load.</p>`);return}
     // 1. AUC
@@ -307,10 +307,11 @@ function aboutPage(){
     $("#cct").addEventListener("click",e=>{const b=e.target.closest("button"); if(!b) return; $("#cct").querySelectorAll(".chip").forEach(x=>x.classList.toggle("on",x===b)); cc=b.dataset.v; drawC()});
     // 3. drug
     const D2=A.drug,mk=(k,name,c,w)=>({name,c,w,x:D2[k].n.map(v=>v/D2[k].N),y:D2[k].p,lo:D2[k].lo,hi:D2[k].hi,n:D2[k].n,N:D2[k].N,endNote:`${D2[k].N} · ${pc0(D2[k].p[D2[k].p.length-1])}`});
-    lineChart($("#drugc"),{label:"Drug target consistency",h:400,xd:[0,1],yd:[.2,1],xt:[0,.25,.5,.75,1],yt:[.2,.3,.4,.5,.6,.7,.8,.9,1],fx:pc0,fy:pc0,refs:[{y:.5,label:"chance"}],
+    let dk="approved"; const drawD=()=>lineChart($("#drugc"),{label:"Drug target consistency",h:400,xd:[0,1],yd:[.2,1],xt:[0,.25,.5,.75,1],yt:[.2,.3,.4,.5,.6,.7,.8,.9,1],fx:pc0,fy:pc0,refs:[{y:.5,label:"chance"}],
       xl:"% of drug targets, most confident first",yl:"% of targets consistent with drug effect",
-      series:[mk("all","Current model","--c-min",3),mk("new","Previous model","--c-new",2)],
+      series:[mk(dk,dk==="approved"?"Approved drugs":"All drugs, phase 2+","--c-min",3)],
       head:xv=>`${pc0(xv)} of targets selected`,row:(se,i)=>`<span style="color:var(${se.c})">●</span> ${esc(se.name)}: ${pc0(se.y[i])} consistent (${pc0(se.lo[i])}–${pc0(se.hi[i])}), top ${se.n[i]} of ${se.N}`});
+    drawD(); $("#drt").addEventListener("click",e=>{const b=e.target.closest("button"); if(!b) return; $("#drt").querySelectorAll(".chip").forEach(x=>x.classList.toggle("on",x===b)); dk=b.dataset.v; drawD()});
   })}
 function indMark(g,p){const d=drugOf(g); if(!d||!(((D.indic||{})[g])||[]).includes(p.t)) return null; if(D.traits[p.t].kind!=="b"||!d[3]||d[3].length!==1) return {m:"•",ok:null};
   return d[3][0]*p.s<0?{m:"✓",ok:true}:{m:"✗",ok:false}}
