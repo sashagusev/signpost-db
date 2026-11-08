@@ -339,7 +339,9 @@ function evCells(p,chosen=true){return `<span class="ev">`+p.ev.map(([z,f],i)=>z
   `<i class="${chosen&&i===p.src?"ch":""}" style="background:var(${z>0?"--up":"--down"});opacity:${conf(f).toFixed(2)}" data-tip="<b>${SRCS[i]}</b>${i===p.src?" · used for the call":""}<br>More gene, ${z>0?"trait up":"trait down"}<br>${pct(f)} chance wrong"></i>`).join("")+`</span>`}
 function evHead(){return `<span class="evh">${SHORT.map(s=>`<span>${s}</span>`).join("")}</span>`}
 function link(kind,...a){return "#"+kind+"_"+a.join("~")}
-function lofTxt(p){return p.lof===0?"–":(p.lof===p.s?"✓ agrees":"✗ disagrees")}
+function lofTxt(p){if(p.lof!==0) return p.lof===p.s?"✓ agrees":"✗ disagrees";
+  if(p.bu) return `<span data-tip="<b>Rare-variant burden</b>, below genome-wide significance<br>${pct(p.bu[1])} chance wrong${p.src===6?"<br>Used for the call":""}">${p.bu[0]===p.s?"✓ agrees":"✗ disagrees"} <span style="color:var(--faint)">${pct(p.bu[1])}</span></span>`;
+  return `<span style="color:var(--faint)">no result</span>`}
 
 // ---------- search
 function searchIndex(q){q=q.trim().toLowerCase(); if(!q) return [];
@@ -386,7 +388,7 @@ function traitPage(t){const T=D.traits[t], rows=byT[t].map(P), hasX=((D.matches|
       <span><span class="lab">Lead variant</span> <span class="tabs" id="fc">${[["all","All"],["reg_linked","pgBoost-linked"],["reg_unlinked","No link"],["coding","Coding"]].map(([v,l])=>`<button class="chip ${v==="all"?"on":""}" data-v="${v}">${l}</button>`).join("")}</span></span>
     </div>
     <div class="evkey">Evidence from each source: ${evCells({ev:[[1,.05],[-1,.2],[1,.4],[null,null],[null,null],[null,null]],src:0},true)} <span><span class="sw" style="background:var(--up)"></span>More gene, ${esc(T.kind==="q"?"higher":"higher risk")}</span><span><span class="sw" style="background:var(--down)"></span>More gene, ${esc(T.kind==="q"?"lower":"lower risk")}</span></div>
-    <div class="tw"><table><thead><tr><th>Gene</th><th>More gene</th><th class="sortable sorted" data-s="pw">Chance wrong<br><span style="font-weight:400;letter-spacing:0;text-transform:none">0 · 20% · 50%</span></th><th class="sortable" data-s="pc">Causal at locus</th><th>${evHead()}</th>${hasX?`<th>Other cohorts</th>`:""}<th>Locus</th><th>Burden test</th></tr></thead><tbody id="tb"></tbody></table></div>
+    <div class="tw"><table><thead><tr><th>Gene</th><th>More gene</th><th class="sortable sorted" data-s="pw">Chance wrong<br><span style="font-weight:400;letter-spacing:0;text-transform:none">0 · 20% · 50%</span></th><th class="sortable" data-s="pc">Causal at locus</th><th>${evHead()}</th>${hasX?`<th>Other cohorts</th>`:""}<th>Locus</th><th>Burden test<br><span style="font-weight:400;letter-spacing:0;text-transform:none">significant, or sub-threshold with % wrong</span></th></tr></thead><tbody id="tb"></tbody></table></div>
     <div class="more" id="more"></div></section>`;
   const draw=()=>{let r=rows.filter(p=>p.pw<=st.tier&&(st.cls==="all"||p.cls===st.cls));
     r.sort(st.sort==="pw"?(a,b)=>a.pw-b.pw:(a,b)=>(b.pc??-1)-(a.pc??-1)||a.pw-b.pw);
