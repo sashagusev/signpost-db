@@ -335,7 +335,8 @@ function effect(t,s,strong){const T=D.traits[t],n=lc(T.name);
 function strength(i,z){if(z==null) return "";
   if(i===5) return "colocalises"; if(i===3) return "score "+(z>0?"+":"−")+Math.abs(z).toFixed(2); return "z = "+(z>0?"+":"−")+Math.abs(z).toFixed(1)}
 const conf=f=>Math.max(.12,Math.min(1,(.5-f)/.42));
-function evCells(p,chosen=true){return `<span class="ev">`+p.ev.map(([z,f],i)=>z==null||f==null?`<i class="no" data-tip="<b>${SRCS[i]}</b><br>No evidence for this pair"></i>`:
+const ev7=p=>p.ev.concat([p.bu?p.bu:[null,null]]);   // six model sources plus the sub-threshold rare-variant burden
+function evCells(p,chosen=true){return `<span class="ev">`+ev7(p).map(([z,f],i)=>z==null||f==null?`<i class="no" data-tip="<b>${SRCS[i]}</b><br>No evidence for this pair"></i>`:
   `<i class="${chosen&&i===p.src?"ch":""}" style="background:var(${z>0?"--up":"--down"});opacity:${conf(f).toFixed(2)}" data-tip="<b>${SRCS[i]}</b>${i===p.src?" · used for the call":""}<br>More gene, ${z>0?"trait up":"trait down"}<br>${pct(f)} chance wrong"></i>`).join("")+`</span>`}
 function evHead(){return `<span class="evh">${SHORT.map(s=>`<span>${s}</span>`).join("")}</span>`}
 function link(kind,...a){return "#"+kind+"_"+a.join("~")}
@@ -429,16 +430,16 @@ function genePage(g){const G=D.genes[g]; let all=byG.get(g).map(P); let st={coh:
     [-.5,-.25,0,.25,.5].forEach(v=>s+=`<line x1="${X(v)}" x2="${X(v)}" y1="${top-16}" y2="${top+r.length*rh-14}" style="stroke:var(${v===0?"--ink":"--rule"});stroke-width:1"/>`);
     s+=`<text x="${X(-.5)}" y="${top-26}" class="tiny">◂ more gene, trait down</text><text x="${X(.5)}" y="${top-26}" class="tiny" text-anchor="end">more gene, trait up ▸</text>`;
     SHORT.forEach((n,i)=>s+=`<text x="${ex+i*24+8}" y="${top-26}" class="tiny" text-anchor="start" transform="rotate(-45 ${ex+i*24+8} ${top-26})">${n}</text>`);
-    s+=`<text x="${ex+6*24+18}" y="${top-26}" class="tiny">Chance wrong</text>`+(drugOf(g)&&(D.indic||{})[g]?`<text x="${ex+6*24+96}" y="${top-14}" class="tiny" transform="rotate(-45 ${ex+6*24+96} ${top-14})">Indication</text>`:"");
+    s+=`<text x="${ex+7*24+18}" y="${top-26}" class="tiny">Chance wrong</text>`+(drugOf(g)&&(D.indic||{})[g]?`<text x="${ex+7*24+96}" y="${top-14}" class="tiny" transform="rotate(-45 ${ex+7*24+96} ${top-14})">Indication</text>`:"");
     r.forEach((p,i)=>{const y=top+i*rh,T=D.traits[p.t],x=X(p.s*(.5-p.pw)),rad=3+8*(p.pc??0);
       s+=`<g class="row" data-h="${link("p",T.id,gid(g))}"><rect class="bgr" x="0" y="${y-rh/2}" width="${W}" height="${rh}" style="fill:transparent"/>
       <text x="${lw}" y="${y+4}" class="tl" text-anchor="end">${esc(T.name.length>44?T.name.slice(0,42)+"…":T.name)}</text>
       <text x="0" y="${y+4}" class="tiny">${{"FinnGen":"FG","Open Targets":"OT"}[T.cohort]||"UKB"}</text>
       <line x1="${pw0}" x2="${pw0+PW}" y1="${y}" y2="${y}" style="stroke:var(--wash);stroke-width:1"/>
       <circle cx="${x}" cy="${y}" r="${rad}" style="fill:var(${p.s>0?"--up":"--down"});fill-opacity:${p.pw>.3?.4:.9};stroke:var(--bg);stroke-width:1.5" data-tip="<b>${esc(T.name)}</b> (${T.cohort})<br>More gene, ${p.s>0?"trait up":"trait down"}<br>${pct(p.pw)} chance wrong · P(causal) ${p.pc==null?"–":Math.round(p.pc*100)+"%"}"/>`;
-      p.ev.forEach(([z,f],j)=>{const xx=ex+j*24,cl=z==null||f==null;
+      ev7(p).forEach(([z,f],j)=>{const xx=ex+j*24,cl=z==null||f==null;
         s+=`<rect x="${xx}" y="${y-8}" width="16" height="16" rx="0" style="${cl?"fill:transparent;stroke:var(--rule)":`fill:var(${z>0?"--up":"--down"});fill-opacity:${conf(f).toFixed(2)};${j===p.src?"stroke:var(--ink);stroke-width:1.5":"stroke:none"}`}" data-tip="<b>${SRCS[j]}</b>${j===p.src?" · used for the call":""}<br>${cl?"No evidence":`More gene, ${z>0?"trait up":"trait down"}<br>${pct(f)} chance wrong`}"/>`});
-      const im=indMark(g,p); s+=`<text x="${ex+6*24+18}" y="${y+4}" class="tl num" style="fill:var(--ink)">${pct(p.pw)}</text>`+(im?`<text x="${ex+6*24+100}" y="${y+5}" text-anchor="middle" style="font-size:14px;font-weight:600;fill:var(${im.ok===false?"--up":"--ink"})" data-tip="${im.ok===null?"Matches an indication of a drug on this gene":im.ok?"Predicted drug effect lowers the risk of an indication (consistent)":"Predicted drug effect raises the risk of an indication"}">${im.m}</text>`:"")+`</g>`});
+      const im=indMark(g,p); s+=`<text x="${ex+7*24+18}" y="${y+4}" class="tl num" style="fill:var(--ink)">${pct(p.pw)}</text>`+(im?`<text x="${ex+7*24+100}" y="${y+5}" text-anchor="middle" style="font-size:14px;font-weight:600;fill:var(${im.ok===false?"--up":"--ink"})" data-tip="${im.ok===null?"Matches an indication of a drug on this gene":im.ok?"Predicted drug effect lowers the risk of an indication (consistent)":"Predicted drug effect raises the risk of an indication"}">${im.m}</text>`:"")+`</g>`});
     ["50%","25%","coin flip","25%","50%"].forEach((t,i)=>s+=`<text x="${X(-.5+i*.25)}" y="${top+r.length*rh+6}" class="tiny" text-anchor="middle">${t}</text>`);
     s+=`<text x="${cx}" y="${top+r.length*rh+24}" class="tiny" text-anchor="middle">distance from a coin flip, 0.5 − P(wrong)</text></svg>`;
     $("#prof").innerHTML=r.length?s:`<p class="note">No calls in this cohort.</p>`};
