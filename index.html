@@ -200,7 +200,7 @@ svg .row{cursor:pointer}
 <div id="tip" hidden></div>
 
 <script>
-const SRCS=["Fine-mapped eQTL","TWAS","SMR + HEIDI","Borzoi","Coding variant","pQTL"], SHORT=["eQTL","TWAS","SMR","Borzoi","Coding","pQTL"];
+const SRCS=["Fine-mapped eQTL","TWAS","SMR + HEIDI","Borzoi","Coding variant","pQTL","Rare-variant burden"], SHORT=["eQTL","TWAS","SMR","Borzoi","Coding","pQTL","Burden"];
 const CLS={reg_linked:"Regulatory, pgBoost-linked",reg_unlinked:"Regulatory, no pgBoost link",coding:"Coding variant",rare_noncoding:"Rare non-coding",no_variant:"No lead variant"};
 const OBS=[[.10,"7.9%"],[.20,"17.7%"],[.30,"25.0%"],[.40,"29.1%"]];
 let D=null, byT=[], byG=new Map(), gIdx=new Map(), tIdx=new Map(), pairKey=new Map();
@@ -209,7 +209,7 @@ const esc=s=>String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&g
 const pct=(v,d=1)=>v==null?"–":(v*100).toFixed(d).replace(/\.0$/,"")+"%";
 const tier=pw=>pw<=.10?"High confidence":pw<=.20?"Moderate confidence":pw<=.30?"Low confidence":"Close to a coin flip";
 const obs=pw=>{for(const [t,o] of OBS) if(pw<=t) return o; return "about 45%"};
-const P=a=>({t:a[0],g:a[1],s:a[2],pw:a[3],src:a[4],pc:a[5],loc:a[6],cls:a[7],lof:a[8],ev:a[9].map(v=>v==null?[null,null]:[Math.sign(v),Math.abs(v)/1000]),sh:null});
+const P=a=>({t:a[0],g:a[1],s:a[2],pw:a[3],src:a[4],pc:a[5],loc:a[6],cls:a[7],lof:a[8],ev:a[9].map(v=>v==null?[null,null]:[Math.sign(v),Math.abs(v)/1000]),bu:a[10]==null?null:[Math.sign(a[10]),Math.abs(a[10])/1000],sh:null});
 const DET={}; const loadDetail=t=>DET[t%D.nshard]||(DET[t%D.nshard]=fetch(`d/${String(t%D.nshard).padStart(2,"0")}.json`).then(r=>r.ok?r.json():null).catch(()=>null));
 const STAGE_L=s=>s>=4?"Approved":s>=3?"Phase 3":s>=2.5?"Phase 2/3":s>=2?"Phase 2":s>=1.5?"Phase 1/2":s>=1?"Phase 1":s>=.5?"Early phase 1":"Preclinical";
 const drugOf=g=>D.drugs?D.drugs[g]:null;
@@ -266,8 +266,8 @@ function aboutPage(){
     <p class="note">Loci that contain a gene with a significant gene-burden result, held out by genomic block. Rank: share of loci where that gene is among the top k candidates. Calibration: predicted P(causal) against the observed share of burden genes among candidates.</p>
     <div class="fig"><div class="ctl"><span class="tabs" id="cvt"><button class="chip on" data-v="rank">Rank</button><button class="chip" data-v="cal">Calibration</button></span><span class="tabs" id="cct"><button class="chip on" data-v="Pan-UKB">Pan-UKB</button><button class="chip" data-v="FinnGen">FinnGen</button></span></div><div id="causc"></div><p class="cap" id="causcap"></p></div></section>
   <section class="sec"><h2>Drug target consistency with predicted sign</h2>
-    <p class="note">Phase 2+ drugs on their targets at common regulatory loci, Pan-UKB, FinnGen and the Open Targets batch pooled, burden-labelled pairs excluded. A target is consistent when the drug's action, applied to the predicted direction, moves the trait the way the indication wants. Targets ranked by recalibrated P(wrong).</p>
-    <div class="fig"><div id="drugc"></div><p class="cap">The red curve keeps only targets whose gene was never burden-labelled in training. Their consistency is near chance beyond the top 25, so drug-direction support is strongest for burden-type genes.</p></div></section>
+    <p class="note">Approved drugs on their targets at common regulatory loci, indication one of the trait's own disease terms, Pan-UKB, FinnGen and the Open Targets batch pooled, burden-labelled pairs excluded. A target is consistent when the drug's action, applied to the predicted direction, moves the trait the way the indication wants. Targets ranked by P(causal) × P(right) for the current model and by P(wrong) for the previous one; 95% Wilson bands.</p>
+    <div class="fig"><div id="drugc"></div><p class="cap">Targets ranked by P(causal) × P(right) for the current model, and by P(wrong) for the previous model on the same targets. Burden-known signs reach 89% on this test, the ceiling set by the drug labels.</p></div></section>
   <section class="sec"><h2>Data</h2><p>GWAS summary statistics from Pan-UKB, FinnGen R12 and the GWAS Catalog through Open Targets; eQTL, pQTL and colocalisation resources as described in the methods; drug mechanisms and clinical stages from Open Targets (ChEMBL); protein function summaries from UniProt (CC BY 4.0). Prototype for research use only; not for clinical decisions.</p></section></div>`;
   loadAbout().then(A=>{if(!A){app.insertAdjacentHTML("beforeend",`<p class="note">The figure data did not load.</p>`);return}
     // 1. AUC
@@ -308,8 +308,8 @@ function aboutPage(){
     // 3. drug
     const D2=A.drug,mk=(k,name,c,w)=>({name,c,w,x:D2[k].n.map(v=>v/D2[k].N),y:D2[k].p,lo:D2[k].lo,hi:D2[k].hi,n:D2[k].n,N:D2[k].N,endNote:`${D2[k].N} · ${pc0(D2[k].p[D2[k].p.length-1])}`});
     lineChart($("#drugc"),{label:"Drug target consistency",h:400,xd:[0,1],yd:[.2,1],xt:[0,.25,.5,.75,1],yt:[.2,.3,.4,.5,.6,.7,.8,.9,1],fx:pc0,fy:pc0,refs:[{y:.5,label:"chance"}],
-      xl:"% of each curve's drug targets, selected by recalibrated P(wrong)",yl:"% of targets consistent with drug effect",
-      series:[mk("all","All targets","--c-min",3),mk("new","Genes new to the model","--c-new",2)],
+      xl:"% of drug targets, most confident first",yl:"% of targets consistent with drug effect",
+      series:[mk("all","Current model","--c-min",3),mk("new","Previous model","--c-new",2)],
       head:xv=>`${pc0(xv)} of targets selected`,row:(se,i)=>`<span style="color:var(${se.c})">●</span> ${esc(se.name)}: ${pc0(se.y[i])} consistent (${pc0(se.lo[i])}–${pc0(se.hi[i])}), top ${se.n[i]} of ${se.N}`});
   })}
 function indMark(g,p){const d=drugOf(g); if(!d||!(((D.indic||{})[g])||[]).includes(p.t)) return null; if(D.traits[p.t].kind!=="b"||!d[3]||d[3].length!==1) return {m:"•",ok:null};
@@ -317,7 +317,7 @@ function indMark(g,p){const d=drugOf(g); if(!d||!(((D.indic||{})[g])||[]).includ
 function drugSummary(g){const d=drugOf(g); if(!d||!d[3]||!d[3].length) return ""; const G=D.genes[g], all=byG.get(g).map(P), R=all.filter(p=>p.pw<=.3).length?all.filter(p=>p.pw<=.3):all;
   return `<div class="dsum">`+d[3].map(dir=>{const lo=R.filter(p=>dir*p.s<0).length, M=d[3].length===1?R.map(p=>indMark(g,p)).filter(Boolean):[], ok=M.filter(m=>m.ok).length, bad=M.filter(m=>m.ok===false).length;
     return `<p><b>${dir<0?"Inhibiting":"Activating"} ${esc(G[1])}</b> is predicted to lower ${lo} trait${lo===1?"":"s"} and raise ${R.length-lo}${M.length?`; ${M.length} match${M.length===1?"es":""} an indication of its drugs, ${ok===M.length?"all consistent":`${ok} consistent and ${bad} raising its risk`} (✓ / ✗ in the chart below)`:""}.</p>`}).join("")+
-    `<p class="dcap">Each drug's action applied to SIGNPOST's direction. For genes the model never trained on, direction agreed with approved drugs near chance beyond the top 25 targets (see About).</p></div>`}
+    `<p class="dcap">Each drug's action applied to SIGNPOST's direction. Agreement with approved drugs is highest for the most confident calls and falls toward 60% over all targets (see About).</p></div>`}
 function fmtv(v){if(v==null||v===-1||v===-99) return "none"; if(Number.isInteger(v)) return v.toLocaleString(); const a=Math.abs(v); return a>=100?Math.round(v).toLocaleString():a>=10?v.toFixed(1):a>=1?v.toFixed(2):v.toFixed(3)}
 function shapBlock(p){const S=p.sh; if(!S||!S.length||!D.features) return "";
   const mx=Math.max(...S.map(x=>Math.abs(x[1])),.01);
@@ -460,7 +460,7 @@ function pairRender(t,g,DT){const T=D.traits[t],G=D.genes[g],a=pairKey.get(t+"|"
     ${ord.map(([i,z,f])=>z==null||f==null?`<div class="evrow none"><span class="s">${SRCS[i]}</span><span>No evidence</span><span></span><span></span></div>`:
       `<div class="evrow"><span class="s">${SRCS[i]}${i===p.src?"<em>Used for the call</em>":""}</span><span class="${z>0?"up":"down"}">${z>0?"▲ raises":"▼ lowers"}</span>
        <div class="axis" data-tip="<b>${SRCS[i]}</b>: ${pct(f)} chance wrong">${zone()}<b style="left:${Math.min(f,.5)/.5*100}%;background:var(${z>0?"--up":"--down"});opacity:${i===p.src?1:.75}"></b><span class="dl num" style="${f>.4?`right:calc(${100-Math.min(f,.5)/.5*100}% + 10px)`:`left:calc(${Math.min(f,.5)/.5*100}% + 10px)`}">${pct(f)}</span></div><span class="num" style="color:var(--muted);font-size:13px">${dt?strength(i,z):""}</span></div>${i===p.src?shapBlock(p):""}`).join("")}
-    <div class="evrow burden ${p.lof===0?"nores":""}"><span class="s">Gene-burden test<em>Exome loss-of-function carriers</em></span>${p.lof===0?`<span style="color:var(--muted)">No significant result</span><span></span><span></span>`:
+    <div class="evrow burden ${p.lof===0&&!p.bu?"nores":""}"><span class="s">Gene-burden test<em>Exome loss-of-function carriers${p.lof===0&&p.bu?", below genome-wide significance":""}</em>${p.src===6?"<em>Used for the call</em>":""}</span>${p.lof===0&&p.bu?`<span class="${p.bu[0]>0?"up":"down"}">${p.bu[0]>0?"▲ raises":"▼ lowers"}</span><div class="axis" data-tip="<b>Rare-variant burden</b>: ${pct(p.bu[1])} chance wrong">${zone()}<b style="left:${Math.min(p.bu[1],.5)/.5*100}%;background:var(${p.bu[0]>0?"--up":"--down"});opacity:${p.src===6?1:.75}"></b><span class="dl num" style="${p.bu[1]>.4?`right:calc(${100-Math.min(p.bu[1],.5)/.5*100}% + 10px)`:`left:calc(${Math.min(p.bu[1],.5)/.5*100}% + 10px)`}">${pct(p.bu[1])}</span></div><span style="font-size:13px">${p.bu[0]===p.s?"<b>Agrees</b> with the SIGNPOST call":"<b style=\"color:var(--muted)\">Disagrees</b> with the SIGNPOST call"}</span>`:p.lof===0?`<span style="color:var(--muted)">No significant result</span><span></span><span></span>`:
       `<span class="${p.lof>0?"up":"down"}">${p.lof>0?"▲ raises":"▼ lowers"}</span><span>${p.lof===p.s?"<b>Agrees</b> with the SIGNPOST call":"<b>Disagrees</b> with the SIGNPOST call"}</span><span style="color:var(--muted);font-size:13px">Used in training, so not an independent check</span>`}</div>
   </section>
   ${(X=>X.length?`<section class="sec"><h2>Other cohorts</h2>

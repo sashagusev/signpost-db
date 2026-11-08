@@ -15,7 +15,7 @@ then visit http://localhost:8000.
 | | |
 |---|---|
 | Cohorts | Pan-UKB (158 traits), FinnGen R12 (207 endpoints), a batch of 92 Open Targets studies (GWAS Catalog and FinnGen R12) |
-| Calls | 48,040 gene–trait pairs at qualifying loci (credible-set lead p < 5×10⁻⁸, minor allele frequency ≥ 1%) with P(wrong) ≤ 40% or a gene-burden label |
+| Calls | 94,906 gene–trait pairs at qualifying loci (credible-set lead p < 5×10⁻⁸, minor allele frequency ≥ 1%) with P(wrong) ≤ 40% or a gene-burden label |
 | Pages | Gene–trait (the call, each source's evidence and its top features, gene-burden test, other cohorts, causal genes at the locus), trait (all genes with a call), gene (all traits, drugs, function), About (accuracy figures) |
 
 ## Files
@@ -31,13 +31,13 @@ then visit http://localhost:8000.
 ## Reading a call
 
 - **Direction**: the effect of more of the gene on the trait. Loss-of-function carriers are expected to show the opposite.
-- **P(wrong)**: the chance the direction is wrong, from per-source models trained against gene-burden tests in exome data and recalibrated against genome-wide burden. The call uses the most confident source.
+- **P(wrong)**: the chance the direction is wrong, from per-source models trained jointly on gene-burden tests in exome data and the genome-wide burden likelihood, recalibrated against genome-wide burden with the gene's locus held out. The call uses the most confident source; a seventh source, the gene's own rare-variant burden below genome-wide significance, enters the same choice. The coding-variant model uses AlphaMissense pathogenicity.
 - **P(causal)**: the chance the gene is the one acting at its locus, shared among nearby protein-coding genes, from pgBoost links and distance.
 
-Drug-direction support is strongest for genes like those the model was trained on; for genes new to the model, agreement with approved drugs is near chance beyond the most confident calls. See the About page.
+Agreement with approved drugs is highest for the most confident calls (about 80% for the top 25 targets) and falls toward 60% over all targets; burden-known signs reach 89% on the same test. See the About page.
 
 ## Data sources
 
-GWAS summary statistics from Pan-UKB, FinnGen R12 and the GWAS Catalog (through Open Targets). Gene-burden labels from Genebass, BRaVa, FinnGen and Open Targets. Drug mechanisms and clinical stages from Open Targets (ChEMBL). Protein function summaries from [UniProt](https://www.uniprot.org) (CC BY 4.0). All of Us data are used only for aggregate accuracy figures.
+GWAS summary statistics from Pan-UKB, FinnGen R12 and the GWAS Catalog (through Open Targets). Gene-burden labels from Genebass, BRaVa, FinnGen and Open Targets. Drug mechanisms and clinical stages from Open Targets (ChEMBL). Protein function summaries from [UniProt](https://www.uniprot.org) (CC BY 4.0). Missense pathogenicity from [AlphaMissense](https://doi.org/10.1126/science.adg7492) (CC BY-NC-SA 4.0). Mouse knockout phenotypes from IMPC were used for validation only. All of Us data are used only for aggregate accuracy figures.
 
 Research use only; not for clinical decisions.
