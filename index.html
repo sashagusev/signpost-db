@@ -232,14 +232,14 @@ function lineChart(host,cfg){const W=1040,H=cfg.h||400,ml=56,mr=190,mt=14,mb=50,
   cfg.xt.forEach(v=>s+=`<text x="${X(v)}" y="${mt+ph+18}" class="tiny" text-anchor="middle">${cfg.fx(v)}</text>`);
   s+=`<line x1="${ml}" x2="${ml+pw}" y1="${mt+ph}" y2="${mt+ph}" style="stroke:var(--frame)"/>`;
   (cfg.refs||[]).forEach(r=>{if(r.lo!=null&&r.hi!=null) s+=`<rect x="${ml}" y="${Y(r.hi)}" width="${pw}" height="${Math.max(0,Y(r.lo)-Y(r.hi))}" style="fill:var(${r.c||"--frame"});fill-opacity:.07"/>`;
-    s+=`<line x1="${ml}" x2="${ml+pw}" y1="${Y(r.y)}" y2="${Y(r.y)}" style="stroke:var(${r.c||"--frame"});stroke-dasharray:3 3"/><text x="${r.left?ml+4:ml+pw-4}" y="${Y(r.y)-6}" class="tiny" text-anchor="${r.left?"start":"end"}" style="${r.c?`fill:var(${r.c})`:""}">${r.label}</text>`});
+    s+=`<line x1="${ml}" x2="${ml+pw}" y1="${Y(r.y)}" y2="${Y(r.y)}" style="stroke:var(${r.c||"--frame"});stroke-dasharray:3 3"/>`+(r.right?"":`<text x="${r.left?ml+4:ml+pw-4}" y="${Y(r.y)-6}" class="tiny" text-anchor="${r.left?"start":"end"}" style="${r.c?`fill:var(${r.c})`:""}">${r.label}</text>`)});
   s+=`<text x="${ml+pw/2}" y="${H-6}" class="tiny" text-anchor="middle">${esc(cfg.xl)}</text><text transform="translate(12 ${mt+ph/2}) rotate(-90)" class="tiny" text-anchor="middle">${esc(cfg.yl)}</text>`;
   const S=cfg.series, xs=se=>se.x;
   S.forEach(se=>{if(se.lo){let a=se.x.map((x,i)=>`${X(x)},${Y(se.hi[i])}`).join(" ")+" "+se.x.map((x,i)=>`${X(x)},${Y(se.lo[i])}`).reverse().join(" "); s+=`<polygon points="${a}" style="fill:var(${se.c});fill-opacity:.09;stroke:none"/>`}});
   if(cfg.diag) s+=`<line x1="${X(cfg.xd[0])}" y1="${Y(cfg.yd[0])}" x2="${X(Math.min(cfg.xd[1],cfg.yd[1]))}" y2="${Y(Math.min(cfg.xd[1],cfg.yd[1]))}" style="stroke:var(--frame);stroke-dasharray:3 3"/><text x="${X(cfg.xd[0]+.62*(cfg.xd[1]-cfg.xd[0]))+8}" y="${Y(cfg.xd[0]+.62*(cfg.xd[1]-cfg.xd[0]))+16}" class="tiny" text-anchor="start">${esc(cfg.diag)}</text>`;
   S.forEach(se=>{s+=`<polyline points="${se.x.map((x,i)=>`${X(x)},${Y(se.y[i])}`).join(" ")}" style="fill:none;stroke:var(${se.c});stroke-width:${se.w||2};stroke-linejoin:round${se.dash?";stroke-dasharray:4 4":""}"/>`; if(se.pts) se.x.forEach((x,i)=>s+=`<circle cx="${X(x)}" cy="${Y(se.y[i])}" r="${se.w>2?4.5:3.5}" style="fill:var(${se.c});stroke:var(--bg);stroke-width:1.5"/>`)});
-  const ends=S.map(se=>({y:Y(se.y[se.y.length-1]),se})).sort((a,b)=>a.y-b.y); for(let i=1;i<ends.length;i++) if(ends[i].y-ends[i-1].y<15) ends[i].y=ends[i-1].y+15;
-  ends.forEach(e=>s+=`<text x="${X(e.se.x[e.se.x.length-1])+10}" y="${e.y+4}" style="fill:var(${e.se.c});font-size:12px;font-weight:${e.se.w>2?600:500}">${esc(e.se.name)}${e.se.endNote?` <tspan style="fill:var(--muted);font-weight:400">${esc(e.se.endNote)}</tspan>`:""}</text>`);
+  const ends=S.map(se=>({y:Y(se.y[se.y.length-1]),se})).concat((cfg.refs||[]).filter(r=>r.right).map(r=>({y:Y(r.y),ref:r}))).sort((a,b)=>a.y-b.y); for(let i=1;i<ends.length;i++) if(ends[i].y-ends[i-1].y<15) ends[i].y=ends[i-1].y+15;
+  ends.forEach(e=>s+=e.ref?`<text x="${ml+pw+10}" y="${e.y+4}" style="fill:var(${e.ref.c||"--muted"});font-size:12px;font-weight:500">${esc(e.ref.label)}</text>`:`<text x="${X(e.se.x[e.se.x.length-1])+10}" y="${e.y+4}" style="fill:var(${e.se.c});font-size:12px;font-weight:${e.se.w>2?600:500}">${esc(e.se.name)}${e.se.endNote?` <tspan style="fill:var(--muted);font-weight:400">${esc(e.se.endNote)}</tspan>`:""}</text>`);
   s+=`<line class="xh" x1="0" x2="0" y1="${mt}" y2="${mt+ph}" style="stroke:var(--ink);stroke-width:1;visibility:hidden"/><g class="xd"></g><rect class="ov" data-tip=" " x="${ml}" y="${mt}" width="${pw}" height="${ph}" style="fill:transparent"/></svg>`;
   host.innerHTML=s; const svg=host.querySelector("svg"),ov=host.querySelector(".ov"),xh=host.querySelector(".xh"),xd=host.querySelector(".xd");
   const near=(arr,v)=>{let lo=0,hi=arr.length-1; while(hi-lo>1){const m=(lo+hi)>>1; if(arr[m]<v) lo=m; else hi=m} return Math.abs(arr[lo]-v)<=Math.abs(arr[hi]-v)?lo:hi};
@@ -310,8 +310,8 @@ function aboutPage(){
     $("#cct").addEventListener("click",e=>{const b=e.target.closest("button"); if(!b) return; $("#cct").querySelectorAll(".chip").forEach(x=>x.classList.toggle("on",x===b)); cc=b.dataset.v; drawC()});
     // 3. drug
     const D2=A.drug,mk=(k,name,c,w)=>({name,c,w,x:D2[k].n.map(v=>v/D2[k].N),y:D2[k].p,lo:D2[k].lo,hi:D2[k].hi,n:D2[k].n,N:D2[k].N,endNote:`${D2[k].N} · ${pc0(D2[k].p[D2[k].p.length-1])}`});
-    const CE=D2.ceiling||{}; const cref=(k,c,left)=>CE[k]?[{y:CE[k].p,c,left,label:`ceiling, ${k==="approved"?"approved":"phase 2+"} drugs: ${pc0(CE[k].p)} with burden-known signs (n=${CE[k].n})`}]:[];
-    lineChart($("#drugc"),{label:"Drug target consistency",h:400,xd:[0,1],yd:[.2,1],xt:[0,.25,.5,.75,1],yt:[.2,.3,.4,.5,.6,.7,.8,.9,1],fx:pc0,fy:pc0,refs:[{y:.5,label:"chance"},...cref("approved","--c-min",true),...cref("all","--c-new",false)],
+    const CE=D2.ceiling||{}; const cref=(k,c)=>CE[k]?[{y:CE[k].p,c,right:true,label:`burden-known signs (n=${CE[k].n})`}]:[];
+    lineChart($("#drugc"),{label:"Drug target consistency",h:400,xd:[0,1],yd:[.2,1],xt:[0,.25,.5,.75,1],yt:[.2,.3,.4,.5,.6,.7,.8,.9,1],fx:pc0,fy:pc0,refs:[{y:.5,label:"chance"},...cref("approved","--c-min"),...cref("all","--c-new")],
       xl:"% of each curve's drug targets, most confident first",yl:"% of targets consistent with drug effect",
       series:[mk("approved","Approved drugs","--c-min",3),mk("all","All drugs, phase 2+","--c-new",2)],
       head:xv=>`${pc0(xv)} of targets selected`,row:(se,i)=>`<span style="color:var(${se.c})">●</span> ${esc(se.name)}: ${pc0(se.y[i])} consistent (${pc0(se.lo[i])}–${pc0(se.hi[i])}), top ${se.n[i]} of ${se.N}`});
