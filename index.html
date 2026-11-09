@@ -269,7 +269,7 @@ function aboutPage(){
     <div class="fig"><div class="ctl"><span class="tabs" id="cvt"><button class="chip on" data-v="rank">Rank</button><button class="chip" data-v="cal">Calibration</button></span><span class="tabs" id="cct"><button class="chip on" data-v="Pan-UKB">Pan-UKB</button><button class="chip" data-v="FinnGen">FinnGen</button></span></div><div id="causc"></div><p class="cap" id="causcap"></p></div></section>
   <section class="sec"><h2>Drug target consistency with predicted sign</h2>
     <p class="note">Drugs on their targets at common regulatory loci, indication one of the trait's own disease terms, Pan-UKB, FinnGen and the Open Targets batch pooled, burden-labelled pairs excluded. A target is consistent when the drug's action, applied to the predicted direction, moves the trait the way the indication wants. Targets ranked by P(causal) × P(right); 95% Wilson bands.</p>
-    <div class="fig"><div id="drugc"></div><p class="cap" id="drugcap">The dashed lines are the ceilings of each test: the concordance obtained when the predicted sign is replaced by the gene-burden sign, with 95% intervals shaded. Approved drugs reach 88% this way and trial-stage drugs about 61%, so the approved set is the informative one; trial-stage drugs mostly add label noise.</p></div></section>
+    <div class="fig"><div id="drugc"></div><p class="cap" id="drugcap">The dashed lines are the ceilings of each test: the concordance obtained when the predicted sign is replaced by the gene-burden sign. Approved drugs reach 88% this way and trial-stage drugs about 61%, so the approved set is the informative one; trial-stage drugs mostly add label noise.</p></div></section>
   <section class="sec"><h2>Data</h2><p>GWAS summary statistics from Pan-UKB, FinnGen R12 and the GWAS Catalog through Open Targets; eQTL, pQTL and colocalisation resources as described in the methods; drug mechanisms and clinical stages from Open Targets (ChEMBL); protein function summaries from UniProt (CC BY 4.0). Prototype for research use only; not for clinical decisions.</p></section></div>`;
   loadAbout().then(A=>{if(!A){app.insertAdjacentHTML("beforeend",`<p class="note">The figure data did not load.</p>`);return}
     // 1. AUC
@@ -310,7 +310,7 @@ function aboutPage(){
     $("#cct").addEventListener("click",e=>{const b=e.target.closest("button"); if(!b) return; $("#cct").querySelectorAll(".chip").forEach(x=>x.classList.toggle("on",x===b)); cc=b.dataset.v; drawC()});
     // 3. drug
     const D2=A.drug,mk=(k,name,c,w)=>({name,c,w,x:D2[k].n.map(v=>v/D2[k].N),y:D2[k].p,lo:D2[k].lo,hi:D2[k].hi,n:D2[k].n,N:D2[k].N,endNote:`${D2[k].N} · ${pc0(D2[k].p[D2[k].p.length-1])}`});
-    const CE=D2.ceiling||{}; const cref=(k,c,left)=>CE[k]?[{y:CE[k].p,lo:CE[k].lo,hi:CE[k].hi,c,left,label:`ceiling, ${k==="approved"?"approved":"phase 2+"} drugs: ${pc0(CE[k].p)} with burden-known signs (n=${CE[k].n})`}]:[];
+    const CE=D2.ceiling||{}; const cref=(k,c,left)=>CE[k]?[{y:CE[k].p,c,left,label:`ceiling, ${k==="approved"?"approved":"phase 2+"} drugs: ${pc0(CE[k].p)} with burden-known signs (n=${CE[k].n})`}]:[];
     lineChart($("#drugc"),{label:"Drug target consistency",h:400,xd:[0,1],yd:[.2,1],xt:[0,.25,.5,.75,1],yt:[.2,.3,.4,.5,.6,.7,.8,.9,1],fx:pc0,fy:pc0,refs:[{y:.5,label:"chance"},...cref("approved","--c-min",true),...cref("all","--c-new",false)],
       xl:"% of each curve's drug targets, most confident first",yl:"% of targets consistent with drug effect",
       series:[mk("approved","Approved drugs","--c-min",3),mk("all","All drugs, phase 2+","--c-new",2)],
