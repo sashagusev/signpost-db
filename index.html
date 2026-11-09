@@ -210,7 +210,7 @@ const pct=(v,d=1)=>v==null?"–":(v*100).toFixed(d).replace(/\.0$/,"")+"%";
 const tier=pw=>pw<=.10?"High confidence":pw<=.20?"Moderate confidence":pw<=.30?"Low confidence":"Close to a coin flip";
 const obs=pw=>{for(const [t,o] of OBS) if(pw<=t) return o; return "about 45%"};
 const P=a=>({t:a[0],g:a[1],s:a[2],pw:a[3],src:a[4],pc:a[5],loc:a[6],cls:a[7],lof:a[8],ev:a[9].map(v=>v==null?[null,null]:[Math.sign(v),Math.abs(v)/1000]),bu:a[10]==null?null:[Math.sign(a[10]),Math.abs(a[10])/1000],sh:null});
-const BUILD="2026-11-08f";   // cache-busting for the data files: trait indices change between builds, so a stale shard would not match core.json
+const BUILD="2026-11-08g";   // cache-busting for the data files: trait indices change between builds, so a stale shard would not match core.json
 const DET={}; const loadDetail=t=>DET[t%D.nshard]||(DET[t%D.nshard]=fetch(`d/${String(t%D.nshard).padStart(2,"0")}.json?v=${BUILD}`).then(r=>r.ok?r.json():null).catch(()=>null));
 const STAGE_L=s=>s>=4?"Approved":s>=3?"Phase 3":s>=2.5?"Phase 2/3":s>=2?"Phase 2":s>=1.5?"Phase 1/2":s>=1?"Phase 1":s>=.5?"Early phase 1":"Preclinical";
 const drugOf=g=>D.drugs?D.drugs[g]:null;

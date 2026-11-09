@@ -15,7 +15,7 @@ then visit http://localhost:8000.
 | | |
 |---|---|
 | Cohorts | Pan-UKB (158 traits), FinnGen R12 (207 endpoints), a batch of 92 Open Targets studies (GWAS Catalog and FinnGen R12) |
-| Calls | 80,181 gene–trait pairs at qualifying loci (credible-set lead p < 5×10⁻⁸, minor allele frequency ≥ 1%) with P(wrong) ≤ 40% or a gene-burden label |
+| Calls | 83,440 gene–trait pairs at qualifying loci (credible-set lead p < 5×10⁻⁸, minor allele frequency ≥ 1%) with P(wrong) ≤ 40% or a gene-burden label |
 | Pages | Gene–trait (the call, each source's evidence and its top features, gene-burden test, other cohorts, causal genes at the locus), trait (all genes with a call), gene (all traits, drugs, function), About (accuracy figures) |
 
 ## Files
@@ -38,6 +38,6 @@ Agreement with approved drugs is highest for the most confident calls (about 80%
 
 ## Data sources
 
-GWAS summary statistics from Pan-UKB, FinnGen R12 and the GWAS Catalog (through Open Targets). Gene-burden labels from Genebass, BRaVa, FinnGen and Open Targets. Drug mechanisms and clinical stages from Open Targets (ChEMBL). Protein function summaries from [UniProt](https://www.uniprot.org) (CC BY 4.0). Missense pathogenicity from [AlphaMissense](https://doi.org/10.1126/science.adg7492) (CC BY-NC-SA 4.0). Mouse knockout phenotypes from IMPC were used for validation only. All of Us data are used only for aggregate accuracy figures.
+GWAS summary statistics from Pan-UKB, FinnGen R12 and the GWAS Catalog (through Open Targets). Gene-burden labels from Genebass, BRaVa, FinnGen and Open Targets; sub-threshold burden evidence and the genome-wide burden likelihood use BRaVa's cross-biobank meta-analysis where it covers the trait, combined with FinnGen's own burden for FinnGen endpoints. Drug mechanisms and clinical stages from Open Targets (ChEMBL). Protein function summaries from [UniProt](https://www.uniprot.org) (CC BY 4.0). Missense pathogenicity from [AlphaMissense](https://doi.org/10.1126/science.adg7492) (CC BY-NC-SA 4.0). Mouse knockout phenotypes from IMPC were used for validation only. All of Us data are used only for aggregate accuracy figures.
 
 Research use only; not for clinical decisions.
