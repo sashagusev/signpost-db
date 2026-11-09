@@ -15,7 +15,7 @@ then visit http://localhost:8000.
 | | |
 |---|---|
 | Cohorts | Pan-UKB (158 traits), FinnGen R12 (207 endpoints), a batch of 92 Open Targets studies (GWAS Catalog and FinnGen R12) |
-| Calls | 81,345 gene–trait pairs at qualifying loci (credible-set lead p < 5×10⁻⁸, minor allele frequency ≥ 1%) with P(wrong) ≤ 40% or a gene-burden label |
+| Calls | 81,456 gene–trait pairs at qualifying loci (credible-set lead p < 5×10⁻⁸, minor allele frequency ≥ 1%) with P(wrong) ≤ 40% or a gene-burden label |
 | Pages | Gene–trait (the call, each source's evidence and its top features, gene-burden test, other cohorts, causal genes at the locus), trait (all genes with a call), gene (all traits, drugs, function), About (accuracy figures) |
 
 ## Files

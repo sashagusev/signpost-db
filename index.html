@@ -210,7 +210,7 @@ const pct=(v,d=1)=>v==null?"–":(v*100).toFixed(d).replace(/\.0$/,"")+"%";
 const tier=pw=>pw<=.10?"High confidence":pw<=.20?"Moderate confidence":pw<=.30?"Low confidence":"Close to a coin flip";
 const obs=pw=>{for(const [t,o] of OBS) if(pw<=t) return o; return "about 45%"};
 const P=a=>({t:a[0],g:a[1],s:a[2],pw:a[3],src:a[4],pc:a[5],loc:a[6],cls:a[7],lof:a[8],ev:a[9].map(v=>v==null?[null,null]:[Math.sign(v),Math.abs(v)/1000]),bu:a[10]==null?null:[Math.sign(a[10]),Math.abs(a[10])/1000],sh:null});
-const BUILD="2026-11-08d";   // cache-busting for the data files: trait indices change between builds, so a stale shard would not match core.json
+const BUILD="2026-11-08e";   // cache-busting for the data files: trait indices change between builds, so a stale shard would not match core.json
 const DET={}; const loadDetail=t=>DET[t%D.nshard]||(DET[t%D.nshard]=fetch(`d/${String(t%D.nshard).padStart(2,"0")}.json?v=${BUILD}`).then(r=>r.ok?r.json():null).catch(()=>null));
 const STAGE_L=s=>s>=4?"Approved":s>=3?"Phase 3":s>=2.5?"Phase 2/3":s>=2?"Phase 2":s>=1.5?"Phase 1/2":s>=1?"Phase 1":s>=.5?"Early phase 1":"Preclinical";
 const drugOf=g=>D.drugs?D.drugs[g]:null;
@@ -261,8 +261,8 @@ function aboutPage(){
     <p class="note">AUC of each source's P(wrong) for a wrong sign at common regulatory loci, against gene-burden signs, with the gene's locus held out from training. All of Us is scored with models trained without its genes.</p>
     <div class="fig"><div class="aucg" id="aucg"></div><div class="legend"><span><svg width="12" height="12" style="vertical-align:middle;margin-right:6px"><circle cx="6" cy="6" r="5" style="fill:var(--c-min)"/></svg>P(wrong) model, 95% bootstrap interval</span><span><svg width="12" height="12" style="vertical-align:middle;margin-right:6px"><path d="M2 2L10 10M10 2L2 10" style="stroke:var(--muted);stroke-width:1.6"/></svg>Raw strength of the source</span></div></div></section>
   <section class="sec"><h2>False sign rate against P(wrong)</h2>
-    <p class="note">1,455 burden-labelled pairs at common regulatory loci with a qualifying lead, Pan-UKB, FinnGen and All of Us pooled, locus held out. Each source's pairs are ranked by its raw strength or by its model's P(wrong); the curve is the false sign rate of the pairs selected so far.</p>
-    <div class="fig"><div class="ctl"><span class="tabs" id="fsrt"><button class="chip" data-v="Raw method">Raw strength</button><button class="chip on" data-v="SIGNPOST">SIGNPOST P(wrong)</button></span></div><div id="fsrc"></div></div></section>
+    <p class="note">Burden-labelled pairs with a qualifying lead, Pan-UKB, FinnGen and All of Us pooled, locus held out; all lead-variant classes, or common regulatory loci only. Each source's pairs are ranked by its raw strength or by its model's P(wrong); the curve is the false sign rate of the pairs selected so far.</p>
+    <div class="fig"><div class="ctl"><span class="tabs" id="fsrt"><button class="chip" data-v="Raw method">Raw strength</button><button class="chip on" data-v="SIGNPOST">SIGNPOST P(wrong)</button></span><span class="tabs" id="fsrl"><button class="chip on" data-v="all">All loci</button><button class="chip" data-v="common regulatory">Common regulatory loci</button></span></div><div id="fsrc"></div></div></section>
   <section class="sec"><h2>Causal gene ranking at burden-gene loci</h2>
     <p class="note">Loci that contain a gene with a significant gene-burden result, held out by genomic block. Rank: share of loci where that gene is among the top k candidates. Calibration: predicted P(causal) against the observed share of burden genes among candidates.</p>
     <div class="fig"><div class="ctl"><span class="tabs" id="cvt"><button class="chip on" data-v="rank">Rank</button><button class="chip" data-v="cal">Calibration</button></span><span class="tabs" id="cct"><button class="chip on" data-v="Pan-UKB">Pan-UKB</button><button class="chip" data-v="FinnGen">FinnGen</button></span></div><div id="causc"></div><p class="cap" id="causcap"></p></div></section>
@@ -285,13 +285,14 @@ function aboutPage(){
         s+=`<text x="${x0+pw+10}" y="${y+4}" class="tiny num" style="fill:var(--soft)">${r.auc.toFixed(2)}</text>`});
       return s+`<text x="${x0+pw/2}" y="${H-2}" class="tiny" text-anchor="middle">AUC for a wrong sign</text></svg></div>`}).join("");
     // 2. FSR
-    const drawF=panel=>{const C=A.fsr.filter(c=>c.panel===panel),N=C[0].N;
+    let fp="SIGNPOST",fl="all"; const drawF=()=>{const C=A.fsr.filter(c=>c.panel===fp&&(c.loci||"common regulatory")===fl),N=C[0].N,panel=fp;
       lineChart($("#fsrc"),{label:"False sign rate against pairs selected",h:400,xd:[0,1],yd:[0,.6],xt:[0,.25,.5,.75,1],yt:[0,.1,.2,.3,.4,.5,.6],fx:pc0,fy:pc0,refs:[{y:.2,label:"20% false sign rate"}],
         xl:`% of the ${N} pairs selected, by ${panel==="SIGNPOST"?"the model's P(wrong)":"the source's raw strength"}`,yl:"False sign rate",
         series:C.map(c=>({name:c.model==="Recalibrated minimum"?"SIGNPOST":c.model,c:SRCV[c.model]||"--ink",w:c.model==="Recalibrated minimum"?3:2,x:c.n.map(v=>v/N),y:c.f,n:c.n})),
         head:xv=>`${pc0(xv)} of pairs selected (${Math.round(xv*N)})`,row:(se,i)=>`<span style="color:var(${se.c})">●</span> ${esc(se.name)}: ${pct(se.y[i])} wrong`})};
-    drawF("SIGNPOST");
-    $("#fsrt").addEventListener("click",e=>{const b=e.target.closest("button"); if(!b) return; $("#fsrt").querySelectorAll(".chip").forEach(x=>x.classList.toggle("on",x===b)); drawF(b.dataset.v)});
+    drawF();
+    $("#fsrt").addEventListener("click",e=>{const b=e.target.closest("button"); if(!b) return; $("#fsrt").querySelectorAll(".chip").forEach(x=>x.classList.toggle("on",x===b)); fp=b.dataset.v; drawF()});
+    $("#fsrl").addEventListener("click",e=>{const b=e.target.closest("button"); if(!b) return; $("#fsrl").querySelectorAll(".chip").forEach(x=>x.classList.toggle("on",x===b)); fl=b.dataset.v; drawF()});
     // 4. causal-gene ranking
     let cv="rank",cc="Pan-UKB"; const drawC=()=>{const C=A.causal[cc]; if(!C) return;
       if(cv==="rank"){const mk=(k,name,c,w,dash)=>({name,c,w,dash,pts:true,x:C.k,y:C.top[k]});
