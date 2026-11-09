@@ -387,14 +387,15 @@ function home(){
 // ---------- trait page (B)
 function traitPage(t){const T=D.traits[t], rows=byT[t].map(P), hasX=((D.matches||{})[t]||[]).length>0;
   const n=[.1,.2,.3].map(c=>rows.filter(p=>p.pw<=c).length);
-  let st={tier:.3,cls:"all",sort:"pw",lim:50};
+  const t0=[.3,.4].find(c=>rows.some(p=>p.pw<=c))??.4; let st={tier:t0,cls:"all",sort:"pw",lim:50};   // traits whose calls all sit between 30% and 40% open on the 40% tier instead of an empty table
   app.innerHTML=`<div class="kicker"><a href="#home">Traits</a> · ${esc(T.cohort)} · ${esc(T.cat)}</div>
   <h1>${esc(T.name)}</h1>
   <section class="sec" style="margin-top:56px">
     <div class="filters">
-      <span><span class="lab">Chance wrong</span> <span class="tabs" id="ft">${[[.1,"≤ 10%"],[.2,"≤ 20%"],[.3,"≤ 30%"],[.4,"≤ 40%"]].map(([v,l])=>`<button class="chip ${v===.3?"on":""}" data-v="${v}">${l}</button>`).join("")}</span></span>
+      <span><span class="lab">Chance wrong</span> <span class="tabs" id="ft">${[[.1,"≤ 10%"],[.2,"≤ 20%"],[.3,"≤ 30%"],[.4,"≤ 40%"]].map(([v,l])=>`<button class="chip ${v===t0?"on":""}" data-v="${v}">${l}</button>`).join("")}</span></span>
       <span><span class="lab">Lead variant</span> <span class="tabs" id="fc">${[["all","All"],["reg_linked","pgBoost-linked"],["reg_unlinked","No link"],["coding","Coding"]].map(([v,l])=>`<button class="chip ${v==="all"?"on":""}" data-v="${v}">${l}</button>`).join("")}</span></span>
     </div>
+    ${t0>.3?`<p class="note">No call for this trait reaches 30% chance wrong or better; showing the weaker calls (up to 40%), which are close to a coin flip.</p>`:""}
     <div class="evkey">Evidence from each source: ${evCells({ev:[[1,.05],[-1,.2],[1,.4],[null,null],[null,null],[null,null]],src:0},true)} <span><span class="sw" style="background:var(--up)"></span>More gene, ${esc(T.kind==="q"?"higher":"higher risk")}</span><span><span class="sw" style="background:var(--down)"></span>More gene, ${esc(T.kind==="q"?"lower":"lower risk")}</span></div>
     <div class="tw"><table><thead><tr><th>Gene</th><th>More gene</th><th class="sortable sorted" data-s="pw">Chance wrong<br><span style="font-weight:400;letter-spacing:0;text-transform:none">0 · 20% · 50%</span></th><th class="sortable" data-s="pc">Causal at locus</th><th>${evHead()}</th>${hasX?`<th>Other cohorts</th>`:""}<th>Locus</th><th>Burden test<br><span style="font-weight:400;letter-spacing:0;text-transform:none">significant, or sub-threshold with % wrong</span></th></tr></thead><tbody id="tb"></tbody></table></div>
     <div class="more" id="more"></div></section>`;
