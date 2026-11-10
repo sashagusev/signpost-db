@@ -276,10 +276,10 @@ function aboutPage(){
   <section class="sec"><h2>Drug target consistency with predicted sign</h2>
     <p class="note">A target is consistent when the drug's action, applied to the predicted direction, moves the trait the way the indication wants. Targets ranked by P(causal) × P(right).</p>
     <div class="fig"><div id="drugc"></div><p class="cap" id="drugcap">Dashed lines: concordance when the predicted sign is replaced by the gene-burden sign.</p></div></section>
-  <section class="sec"><h2>Download</h2><dl>
+  <section class="sec"><h2>Download</h2><p class="note">One row per gene and trait: direction of more gene, chance wrong, the source that made the call, P(causal), lead variant, each source's strength and chance wrong, and the gene-burden test.</p><dl style="grid-template-columns:max-content minmax(0,1fr)">
     <dt><a href="signpost_calls.csv" download>signpost_calls.csv</a></dt><dd>The ${D.pairs.length.toLocaleString()} calls on this site, at 30% chance wrong or better (CSV, 8 MB).</dd>
     <dt><a href="signpost_all_pairs.csv.gz" download>signpost_all_pairs.csv.gz</a></dt><dd>Every scored gene–trait pair at qualifying loci, including calls close to a coin flip (gzipped CSV, 14 MB).</dd>
-  </dl><p class="note">One row per gene and trait: direction of more gene, chance wrong, the source that made the call, P(causal), lead variant, each source's strength and chance wrong, and the gene-burden test.</p></section>
+  </dl></section>
   <section class="sec"><h2>Data</h2><p>GWAS summary statistics from Pan-UKB, FinnGen R12 and the GWAS Catalog through Open Targets; eQTL, pQTL and colocalisation resources as described in the methods; drug mechanisms and clinical stages from Open Targets (ChEMBL); protein function summaries from UniProt (CC BY 4.0). Prototype for research use only; not for clinical decisions.</p></section></div>`;
   loadAbout().then(A=>{if(!A){app.insertAdjacentHTML("beforeend",`<p class="note">The figure data did not load.</p>`);return}
     // 1. AUC
