@@ -355,7 +355,7 @@ function lofTxt(p){if(p.lof!==0) return p.lof===p.s?"✓ agrees":"✗ disagrees"
 function searchIndex(q){q=q.trim().toLowerCase(); if(!q) return [];
   const out=[];
   for(const [g,list] of byG){const n=gname(g).toLowerCase(); if(n.startsWith(q)) out.push({k:"Gene",l:gname(g),m:`${list.length} trait${list.length>1?"s":""}`,h:link("g",gid(g)),r:n===q?0:1+n.length/100})}
-  D.traits.forEach((T,t)=>{if(!byT[t].some(a=>a[3]<=.3)) return;   // browse lists only show traits with at least one call at 30% chance wrong or better (the pages of the others stay reachable through search) const n=T.name.toLowerCase(), i=n.indexOf(q); if(i>=0) out.push({k:"Trait",l:T.name,m:`${T.cohort} · ${byT[t].length} genes`,h:link("t",T.id),r:(i===0?1.2:2)+n.length/200})});
+  D.traits.forEach((T,t)=>{const n=T.name.toLowerCase(), i=n.indexOf(q); if(i>=0) out.push({k:"Trait",l:T.name,m:`${T.cohort} · ${byT[t].length} genes`,h:link("t",T.id),r:(i===0?1.2:2)+n.length/200})});
   return out.sort((a,b)=>a.r-b.r).slice(0,9)}
 function wireSearch(box){const inp=box.querySelector("input"); let sel=-1, res=[];
   const close=()=>{box.querySelector(".sugg")?.remove(); sel=-1};
@@ -371,12 +371,12 @@ function wireSearch(box){const inp=box.querySelector("input"); let sel=-1, res=[
 
 // ---------- home
 function home(){
-  const cats=new Map(); D.traits.forEach((T,t)=>{if(!byT[t].some(a=>a[3]<=.3)) return;   // browse lists only show traits with at least one call at 30% chance wrong or better (the pages of the others stay reachable through search) const k=T.cohort+"|"+T.cat; if(!cats.has(k)) cats.set(k,[]); cats.get(k).push(t)});
+  const cats=new Map(); D.traits.forEach((T,t)=>{if(!byT[t].some(a=>a[3]<=.3)) return; /* browse lists only show traits with a call at 30% chance wrong or better; the others stay reachable through search */ const k=T.cohort+"|"+T.cat; if(!cats.has(k)) cats.set(k,[]); cats.get(k).push(t)});
   const conf20=D.pairs.filter(a=>a[3]<=.2).length;
   const cohortList=c=>[...cats].filter(([k])=>k.startsWith(c)).sort((a,b)=>b[1].length-a[1].length).map(([k,ts])=>`<div class="cat"><h3>${esc(k.split("|")[1])}</h3>${
      ts.sort((a,b)=>tname(a).localeCompare(tname(b))).map(t=>`<a href="${link("t",D.traits[t].id)}"><span class="n">${esc(tname(t))}</span><span class="c num">${byT[t].filter(p=>p[3]<=.3).length}</span></a>`).join("")}</div>`).join("");
   app.innerHTML=`
-  <h1>Signed gene effects across 450 human traits</h1>
+  <h1>Signed gene effects across 430 human traits</h1>
   <p class="dek">For ${byG.size.toLocaleString()} genes at genome-wide significant loci, SIGNPOST predicts whether more of the gene raises or lowers each trait, how likely that call is wrong, and how likely the gene is the one acting at the locus.</p>
   <div class="sbox big" id="bigsearch" style="max-width:620px;margin-top:44px"><input id="q1" type="search" placeholder="Try ANGPTL3, LDL direct or asthma" autocomplete="off" aria-label="Search a gene or trait"></div>  <section class="sec"><h2>Browse traits</h2><p class="note">Number of genes with a call at 30% or better.</p>
     <div class="tabs" id="ctabs"><button class="chip on" data-c="Pan-UKB">Pan-UKB</button><button class="chip" data-c="FinnGen">FinnGen</button><button class="chip" data-c="Open Targets">Open Targets</button></div>
