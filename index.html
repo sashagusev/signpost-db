@@ -274,8 +274,8 @@ function aboutPage(){
     <p class="note">Loci holding a gene with a significant gene-burden result: how often P(causal) ranks that gene near the top.</p>
     <div class="fig"><div class="ctl"><span class="tabs" id="cvt"><button class="chip on" data-v="rank">Rank</button><button class="chip" data-v="cal">Calibration</button></span><span class="tabs" id="cct"><button class="chip on" data-v="Pan-UKB">Pan-UKB</button><button class="chip" data-v="FinnGen">FinnGen</button></span></div><div id="causc"></div><p class="cap" id="causcap"></p></div></section>
   <section class="sec"><h2>Drug target consistency with predicted sign</h2>
-    <p class="note">A target is consistent when the drug's action, applied to the predicted direction, moves the trait the way the indication wants. Targets ranked by P(causal) × P(right).</p>
-    <div class="fig"><div id="drugc"></div><p class="cap" id="drugcap">Dashed lines: concordance when the predicted sign is replaced by the gene-burden sign.</p></div></section>
+    <p class="note">A target is consistent when the drug's action, applied to the predicted direction, moves the trait the way the indication wants. Balanced accuracy averages the consistent share over activator and inhibitor drugs, so the fact that most drugs are inhibitors does not count as accuracy. Targets ranked by P(causal) × P(right).</p>
+    <div class="fig"><div id="drugc"></div><p class="cap" id="drugcap">Dashed lines: balanced accuracy when the predicted sign is replaced by the gene-burden sign.</p></div></section>
   <section class="sec"><h2>Download</h2><p class="note">One row per gene and trait: direction of more gene, chance wrong, the source that made the call, P(causal), lead variant, each source's strength and chance wrong, and the gene-burden test.</p><dl style="grid-template-columns:max-content minmax(0,1fr)">
     <dt><a href="signpost_calls.csv" download>signpost_calls.csv</a></dt><dd>The ${D.pairs.length.toLocaleString()} calls on this site, at 30% chance wrong or better (CSV, 8 MB).</dd>
     <dt><a href="signpost_all_pairs.csv.gz" download>signpost_all_pairs.csv.gz</a></dt><dd>Every scored gene–trait pair at qualifying loci, including calls close to a coin flip (gzipped CSV, 14 MB).</dd>
@@ -321,10 +321,10 @@ function aboutPage(){
     // 3. drug
     const D2=A.drug,mk=(k,name,c,w)=>({name,c,w,x:D2[k].n.map(v=>v/D2[k].N),y:D2[k].p,lo:D2[k].lo,hi:D2[k].hi,n:D2[k].n,N:D2[k].N,endNote:`${D2[k].N} · ${pc0(D2[k].p[D2[k].p.length-1])}`});
     const CE=D2.ceiling||{}; const cref=(k,c)=>CE[k]?[{y:CE[k].p,c,right:true,label:`burden-known signs (n=${CE[k].n})`}]:[];
-    lineChart($("#drugc"),{label:"Drug target consistency",h:400,xd:[0,1],yd:[.2,1],xt:[0,.25,.5,.75,1],yt:[.2,.3,.4,.5,.6,.7,.8,.9,1],fx:pc0,fy:pc0,refs:[{y:.5,label:"chance"},...cref("approved","--c-min"),...cref("all","--c-new")],
-      xl:"% of each curve's drug targets, most confident first",yl:"% of targets consistent with drug effect",
+    lineChart($("#drugc"),{label:"Drug target balanced accuracy",h:400,xd:[0,1],yd:[.2,1],xt:[0,.25,.5,.75,1],yt:[.2,.3,.4,.5,.6,.7,.8,.9,1],fx:pc0,fy:pc0,refs:[{y:.5,label:"chance"},...cref("approved","--c-min"),...cref("all","--c-new")],
+      xl:"% of each curve's drug targets, most confident first",yl:"Balanced accuracy",
       series:[mk("approved","Approved drugs","--c-min",3),mk("all","All drugs, phase 2+","--c-new",2)],
-      head:xv=>`${pc0(xv)} of targets selected`,row:(se,i)=>`<span style="color:var(${se.c})">●</span> ${esc(se.name)}: ${pc0(se.y[i])} consistent (${pc0(se.lo[i])}–${pc0(se.hi[i])}), top ${se.n[i]} of ${se.N}`});
+      head:xv=>`${pc0(xv)} of targets selected`,row:(se,i)=>`<span style="color:var(${se.c})">●</span> ${esc(se.name)}: ${pc0(se.y[i])} balanced accuracy (${pc0(se.lo[i])}–${pc0(se.hi[i])}), top ${se.n[i]} of ${se.N}`});
   })}
 function indMark(g,p){const d=drugOf(g); if(!d||!(((D.indic||{})[g])||[]).includes(p.t)) return null; if(D.traits[p.t].kind!=="b"||!d[3]||d[3].length!==1) return {m:"•",ok:null};
   return d[3][0]*p.s<0?{m:"✓",ok:true}:{m:"✗",ok:false}}

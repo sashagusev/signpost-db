@@ -36,7 +36,7 @@ then visit http://localhost:8000.
 - **P(wrong)**: the chance the direction is wrong, from per-source models trained jointly on gene-burden tests in exome data and the genome-wide burden likelihood, recalibrated against genome-wide burden with the gene's locus held out, with an offset for the lead-variant class (coding; regulatory and enhancer-linked by pgBoost; regulatory and unlinked). The call uses the most confident source; a seventh source, the gene's own rare-variant burden below genome-wide significance, enters the same choice, and a genome-wide significant burden test sets the call directly (the page names the test and its p). Values below 5% are shown as <5%. The coding-variant model uses AlphaMissense pathogenicity.
 - **P(causal)**: the chance the gene is the one acting at its locus, shared among nearby protein-coding genes. Learned from loci where a coding credible-set variant names the gene, using distance, credible-set position relative to the gene, ENCODE-rE2G enhancer–gene links, pgBoost, PoPS, constraint and expression; burden-significant genes, which it never saw, are recovered as the top candidate at 63% of their loci (nearest gene: 38%).
 
-Agreement with approved drugs is highest for the most confident calls (about 80% for the top 25 targets) and falls toward 60% over all targets; burden-known signs reach 89% on the same test. See the About page.
+On approved drug targets, balanced accuracy (activator and inhibitor drugs weighted equally) is 76% for the 30 most confident targets and 63% over all 140; burden-known signs reach 89% on the same test. See the About page.
 
 ## Data sources
 
