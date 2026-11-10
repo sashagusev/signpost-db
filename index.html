@@ -90,8 +90,7 @@ h2{font-weight:600;font-size:18px;line-height:1.2;margin:0 0 6px;text-wrap:balan
 .evrow .s{font-weight:600}
 .evrow .s em{font-style:normal;font-weight:500;font-size:11px;color:var(--muted);display:block;letter-spacing:.02em}
 .evrow.none{color:var(--faint)}
-.evrow.burden{background:var(--hl);margin-inline:-12px;padding-inline:12px;border-bottom:0;margin-top:14px}
-.evrow.burden.nores{background:var(--wash)}
+.evrow.call{background:var(--hl);margin-inline:-12px;padding-inline:12px}
 .shap{padding:6px 0 18px 186px;border-bottom:1px solid var(--rule)}
 .shead,.srow{display:grid;grid-template-columns:minmax(0,260px) 76px minmax(0,1fr);gap:14px;align-items:center}
 .shead{font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);font-weight:600;padding-bottom:6px}
@@ -207,10 +206,12 @@ let D=null, byT=[], byG=new Map(), gIdx=new Map(), tIdx=new Map(), pairKey=new M
 const $=s=>document.querySelector(s), app=$("#app");
 const esc=s=>String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 const pct=(v,d=1)=>v==null?"–":(v*100).toFixed(d).replace(/\.0$/,"")+"%";
+const fw=v=>v==null?"–":v<.05?"<5%":pct(v);   // chance wrong: below 5% is shown as <5% (the replication error rate of a burden sign; finer values are not meaningful)
+const sci=v=>{if(v==null) return "–"; if(v>=1e-3) return v.toPrecision(2); const e=Math.floor(Math.log10(v)), m=v/10**e, SUP={"-":"⁻",0:"⁰",1:"¹",2:"²",3:"³",4:"⁴",5:"⁵",6:"⁶",7:"⁷",8:"⁸",9:"⁹"}; return `${m.toFixed(1).replace(/\.0$/,"")}×10${String(e).split("").map(c=>SUP[c]).join("")}`};
 const tier=pw=>pw<=.10?"High confidence":pw<=.20?"Moderate confidence":pw<=.30?"Low confidence":"Close to a coin flip";
 const obs=pw=>{for(const [t,o] of OBS) if(pw<=t) return o; return "about 45%"};
 const P=a=>({t:a[0],g:a[1],s:a[2],pw:a[3],src:a[4],pc:a[5],loc:a[6],cls:a[7],lof:a[8],ev:a[9].map(v=>v==null?[null,null]:[Math.sign(v),Math.abs(v)/1000]),bu:a[10]==null?null:[Math.sign(a[10]),Math.abs(a[10])/1000],sh:null});
-const BUILD="2026-11-09c";   // cache-busting for the data files: trait indices change between builds, so a stale shard would not match core.json
+const BUILD="2026-11-09d";   // cache-busting for the data files: trait indices change between builds, so a stale shard would not match core.json
 const DET={}; const loadDetail=t=>DET[t%D.nshard]||(DET[t%D.nshard]=(async()=>{const f=q=>fetch(`d/${String(t%D.nshard).padStart(2,"0")}.json?v=${BUILD}${q}`,{cache:q?"no-store":"default"}).then(r=>r.ok?r.json():null).catch(()=>null);
   let S=await f(""); if(S&&D.build&&S.build!==D.build) S=await f("&r="+Date.now());   // shard from another build than core.json (stale cache): refetch bypassing the cache
   if(S&&D.build&&S.build!==D.build&&!sessionStorage.getItem("sp-reloaded")){sessionStorage.setItem("sp-reloaded","1"); location.reload(); return null}   // still mismatched: the page itself is stale, reload once
@@ -224,7 +225,7 @@ function rx(g){const d=drugOf(g); if(!d) return "";
 let UNI=null; const loadUni=()=>UNI||(UNI=fetch("uniprot.json?v="+BUILD).then(r=>r.ok?r.json():null).catch(()=>null));
 function cross(t,g){return ((D.matches||{})[t]||[]).map(j=>pairKey.get(j+"|"+g)).filter(Boolean).map(P).sort((a,b)=>a.pw-b.pw)}
 function crossCell(p){const X=cross(p.t,p.g); if(!X.length) return `<span style="color:var(--faint)">–</span>`;
-  const k=X.filter(x=>x.s===p.s).length, tip=X.map(x=>`${esc(D.traits[x.t].cohort)} · ${esc(D.traits[x.t].name)} · ${x.s>0?"▲":"▼"} ${pct(x.pw)}`).join("<br>");
+  const k=X.filter(x=>x.s===p.s).length, tip=X.map(x=>`${esc(D.traits[x.t].cohort)} · ${esc(D.traits[x.t].name)} · ${x.s>0?"▲":"▼"} ${fw(x.pw)}`).join("<br>");
   return `<span class="xc num ${k===X.length?"all":k===0?"none":""}" data-tip="<b>Same gene, matching traits in other cohorts</b><br>${esc(tip)}">${k===X.length?"✓":k===0?"✗":"~"} ${k}/${X.length}</span>`}
 const SRCV={"Fine-mapped eQTL":"--c-eq","TWAS":"--c-tw","SMR + HEIDI":"--c-smr","Borzoi":"--c-bz","pQTL":"--c-pq","Coding variant":"--c-cd","Recalibrated minimum":"--c-min"};
 let ABOUT=null; const loadAbout=()=>ABOUT||(ABOUT=fetch("about.json?v="+BUILD).then(r=>r.ok?r.json():null).catch(()=>null));
@@ -257,7 +258,7 @@ function aboutPage(){
   <p class="dek" style="max-width:40em">SIGNPOST predicts whether more of a gene raises or lowers a human trait, for genes at genome-wide significant loci, and says how likely each call is to be wrong.</p>
   <section class="sec" style="margin-top:56px"><h2>How to read a call</h2><dl>
     <dt>Direction</dt><dd>The effect of more of the gene (higher expression or protein) on the trait. Loss-of-function carriers are expected to show the opposite.</dd>
-    <dt>P(wrong)</dt><dd>The chance the direction is wrong. Each source's model is trained against gene-burden tests in exome data, then recalibrated against genome-wide burden; the call uses the most confident source.</dd>
+    <dt>P(wrong)</dt><dd>The chance the direction is wrong. Each source's model is trained against gene-burden tests in exome data, then recalibrated against genome-wide burden; the call uses the most confident source, and a genome-wide significant gene-burden test sets the call directly. Values below 5% are shown as &lt;5%.</dd>
     <dt>P(causal)</dt><dd>The chance the gene is the one acting at its locus, shared among nearby protein-coding genes, from distance, enhancer–gene links (ENCODE-rE2G, pgBoost), credible-set position and gene annotations, learned at loci where a coding variant names the gene.</dd>
     <dt>Loci</dt><dd>Only credible sets whose lead variant has p &lt; 5×10⁻⁸ and minor allele frequency ≥ 1%.</dd>
     <dt>Cohorts</dt><dd>Pan-UKB (158 traits), FinnGen R12 (207 endpoints) and a batch of 92 Open Targets studies. All of Us is used only to check accuracy.</dd>
@@ -344,11 +345,10 @@ function strength(i,z){if(z==null) return "";
 const conf=f=>Math.max(.12,Math.min(1,(.5-f)/.42));
 const ev7=p=>p.ev.concat([p.bu?p.bu:[null,null]]);   // six model sources plus the sub-threshold rare-variant burden
 function evCells(p,chosen=true){return `<span class="ev">`+ev7(p).map(([z,f],i)=>z==null||f==null?`<i class="no" data-tip="<b>${SRCS[i]}</b><br>No evidence for this pair"></i>`:
-  `<i class="${chosen&&i===p.src?"ch":""}" style="background:var(${z>0?"--up":"--down"});opacity:${conf(f).toFixed(2)}" data-tip="<b>${SRCS[i]}</b>${i===p.src?" · used for the call":""}<br>More gene, ${z>0?"trait up":"trait down"}<br>${pct(f)} chance wrong"></i>`).join("")+`</span>`}
+  `<i class="${chosen&&i===p.src?"ch":""}" style="background:var(${z>0?"--up":"--down"});opacity:${conf(f).toFixed(2)}" data-tip="<b>${SRCS[i]}</b>${i===p.src?" · used for the call":""}<br>More gene, ${z>0?"trait up":"trait down"}<br>${fw(f)} chance wrong"></i>`).join("")+`</span>`}
 function evHead(){return `<span class="evh">${SHORT.map(s=>`<span>${s}</span>`).join("")}</span>`}
 function link(kind,...a){return "#"+kind+"_"+a.join("~")}
-function lofTxt(p){if(p.lof!==0) return p.lof===p.s?"✓ agrees":"✗ disagrees";
-  if(p.bu) return `<span data-tip="<b>Rare-variant burden</b>, below genome-wide significance<br>${pct(p.bu[1])} chance wrong${p.src===6?"<br>Used for the call":""}">${p.bu[0]===p.s?"✓ agrees":"✗ disagrees"} <span style="color:var(--faint)">${pct(p.bu[1])}</span></span>`;
+function lofTxt(p){if(p.bu) return `<span data-tip="<b>Gene-burden test</b><br>${fw(p.bu[1])} chance wrong${p.src===6?"<br>Used for the call":""}">${p.bu[0]===p.s?"✓ agrees":"✗ disagrees"} <span style="color:var(--faint)">${fw(p.bu[1])}</span></span>`;
   return `<span style="color:var(--faint)">no result</span>`}
 
 // ---------- search
@@ -397,14 +397,14 @@ function traitPage(t){const T=D.traits[t], rows=byT[t].map(P), hasX=((D.matches|
     </div>
     ${t0>.3?`<p class="note">No call for this trait reaches 30% chance wrong or better; showing the weaker calls (up to 40%), which are close to a coin flip.</p>`:""}
     <div class="evkey">Evidence from each source: ${evCells({ev:[[1,.05],[-1,.2],[1,.4],[null,null],[null,null],[null,null]],src:0},true)} <span><span class="sw" style="background:var(--up)"></span>More gene, ${esc(T.kind==="q"?"higher":"higher risk")}</span><span><span class="sw" style="background:var(--down)"></span>More gene, ${esc(T.kind==="q"?"lower":"lower risk")}</span></div>
-    <div class="tw"><table><thead><tr><th>Gene</th><th>More gene</th><th class="sortable sorted" data-s="pw">Chance wrong<br><span style="font-weight:400;letter-spacing:0;text-transform:none">0 · 20% · 50%</span></th><th class="sortable" data-s="pc">Causal at locus</th><th>${evHead()}</th>${hasX?`<th>Other cohorts</th>`:""}<th>Locus</th><th>Burden test<br><span style="font-weight:400;letter-spacing:0;text-transform:none">significant, or sub-threshold with % wrong</span></th></tr></thead><tbody id="tb"></tbody></table></div>
+    <div class="tw"><table><thead><tr><th>Gene</th><th>More gene</th><th class="sortable sorted" data-s="pw">Chance wrong<br><span style="font-weight:400;letter-spacing:0;text-transform:none">0 · 20% · 50%</span></th><th class="sortable" data-s="pc">Causal at locus</th><th>${evHead()}</th>${hasX?`<th>Other cohorts</th>`:""}<th>Locus</th><th>Burden test<br><span style="font-weight:400;letter-spacing:0;text-transform:none">agreement, % wrong</span></th></tr></thead><tbody id="tb"></tbody></table></div>
     <div class="more" id="more"></div></section>`;
   const draw=()=>{let r=rows.filter(p=>p.pw<=st.tier&&(st.cls==="all"||p.cls===st.cls));
     r.sort(st.sort==="pw"?(a,b)=>a.pw-b.pw:(a,b)=>(b.pc??-1)-(a.pc??-1)||a.pw-b.pw);
     const show=r.slice(0,st.lim);
     $("#tb").innerHTML=show.map(p=>{const L=p.loc>=0&&D.locpos[p.loc]?{c:D.locpos[p.loc][0],p:D.locpos[p.loc][1]}:null;return `<tr tabindex="0" data-h="${link("p",T.id,gid(p.g))}"><td class="gn">${esc(gname(p.g))}${rx(p.g)}</td>
       <td class="dir ${p.s>0?"up":"down"}">${p.s>0?"▲ raises":"▼ lowers"}</td>
-      <td><div class="dotax" data-tip="<b>${pct(p.pw)}</b> chance the direction is wrong<br>${tier(p.pw)}"><b style="left:${Math.min(p.pw,.5)/.5*100}%;opacity:${p.pw>.3?.45:1}"></b></div></td>
+      <td><div class="dotax" data-tip="<b>${fw(p.pw)}</b> chance the direction is wrong<br>${tier(p.pw)}"><b style="left:${Math.min(p.pw,.5)/.5*100}%;opacity:${p.pw>.3?.45:1}"></b></div></td>
       <td><div class="mbar"><div class="pbar"><i style="width:${(p.pc??0)*100}%"></i></div><span class="num">${p.pc==null?"–":Math.round(p.pc*100)+"%"}</span></div></td>
       <td>${evCells(p)}</td>${hasX?`<td>${crossCell(p)}</td>`:""}<td class="num" style="font-size:12.5px;color:var(--muted);white-space:nowrap">${L&&L.c?`chr${L.c}:${(L.p/1e6).toFixed(1)} Mb`:"–"}</td><td class="lof">${lofTxt(p)}</td></tr>`}).join("")||`<tr><td colspan="${hasX?8:7}" style="color:var(--muted);padding:28px 0">No genes pass these filters.</td></tr>`;
     $("#more").innerHTML=r.length>st.lim?`<button class="btn" id="mb">Show ${Math.min(50,r.length-st.lim)} more of ${r.length-st.lim}</button>`:`<span class="note">${r.length} genes shown.</span>`;
@@ -444,10 +444,10 @@ function genePage(g){const G=D.genes[g]; let all=byG.get(g).map(P); let st={coh:
       <text x="${lw}" y="${y+4}" class="tl" text-anchor="end">${esc(T.name.length>44?T.name.slice(0,42)+"…":T.name)}</text>
       <text x="0" y="${y+4}" class="tiny">${{"FinnGen":"FG","Open Targets":"OT"}[T.cohort]||"UKB"}</text>
       <line x1="${pw0}" x2="${pw0+PW}" y1="${y}" y2="${y}" style="stroke:var(--wash);stroke-width:1"/>
-      <circle cx="${x}" cy="${y}" r="${rad}" style="fill:var(${p.s>0?"--up":"--down"});fill-opacity:${p.pw>.3?.4:.9};stroke:var(--bg);stroke-width:1.5" data-tip="<b>${esc(T.name)}</b> (${T.cohort})<br>More gene, ${p.s>0?"trait up":"trait down"}<br>${pct(p.pw)} chance wrong · P(causal) ${p.pc==null?"–":Math.round(p.pc*100)+"%"}"/>`;
+      <circle cx="${x}" cy="${y}" r="${rad}" style="fill:var(${p.s>0?"--up":"--down"});fill-opacity:${p.pw>.3?.4:.9};stroke:var(--bg);stroke-width:1.5" data-tip="<b>${esc(T.name)}</b> (${T.cohort})<br>More gene, ${p.s>0?"trait up":"trait down"}<br>${fw(p.pw)} chance wrong · P(causal) ${p.pc==null?"–":Math.round(p.pc*100)+"%"}"/>`;
       ev7(p).forEach(([z,f],j)=>{const xx=ex+j*24,cl=z==null||f==null;
-        s+=`<rect x="${xx}" y="${y-8}" width="16" height="16" rx="0" style="${cl?"fill:transparent;stroke:var(--rule)":`fill:var(${z>0?"--up":"--down"});fill-opacity:${conf(f).toFixed(2)};${j===p.src?"stroke:var(--ink);stroke-width:1.5":"stroke:none"}`}" data-tip="<b>${SRCS[j]}</b>${j===p.src?" · used for the call":""}<br>${cl?"No evidence":`More gene, ${z>0?"trait up":"trait down"}<br>${pct(f)} chance wrong`}"/>`});
-      const im=indMark(g,p); s+=`<text x="${ex+7*24+18}" y="${y+4}" class="tl num" style="fill:var(--ink)">${pct(p.pw)}</text>`+(im?`<text x="${ex+7*24+100}" y="${y+5}" text-anchor="middle" style="font-size:14px;font-weight:600;fill:var(${im.ok===false?"--up":"--ink"})" data-tip="${im.ok===null?"Matches an indication of a drug on this gene":im.ok?"Predicted drug effect lowers the risk of an indication (consistent)":"Predicted drug effect raises the risk of an indication"}">${im.m}</text>`:"")+`</g>`});
+        s+=`<rect x="${xx}" y="${y-8}" width="16" height="16" rx="0" style="${cl?"fill:transparent;stroke:var(--rule)":`fill:var(${z>0?"--up":"--down"});fill-opacity:${conf(f).toFixed(2)};${j===p.src?"stroke:var(--ink);stroke-width:1.5":"stroke:none"}`}" data-tip="<b>${SRCS[j]}</b>${j===p.src?" · used for the call":""}<br>${cl?"No evidence":`More gene, ${z>0?"trait up":"trait down"}<br>${fw(f)} chance wrong`}"/>`});
+      const im=indMark(g,p); s+=`<text x="${ex+7*24+18}" y="${y+4}" class="tl num" style="fill:var(--ink)">${fw(p.pw)}</text>`+(im?`<text x="${ex+7*24+100}" y="${y+5}" text-anchor="middle" style="font-size:14px;font-weight:600;fill:var(${im.ok===false?"--up":"--ink"})" data-tip="${im.ok===null?"Matches an indication of a drug on this gene":im.ok?"Predicted drug effect lowers the risk of an indication (consistent)":"Predicted drug effect raises the risk of an indication"}">${im.m}</text>`:"")+`</g>`});
     ["50%","25%","coin flip","25%","50%"].forEach((t,i)=>s+=`<text x="${X(-.5+i*.25)}" y="${top+r.length*rh+6}" class="tiny" text-anchor="middle">${t}</text>`);
     s+=`<text x="${cx}" y="${top+r.length*rh+24}" class="tiny" text-anchor="middle">distance from a coin flip, 0.5 − P(wrong)</text></svg>`;
     $("#prof").innerHTML=r.length?s:`<p class="note">No calls in this cohort.</p>`};
@@ -461,25 +461,25 @@ function pairRender(t,g,DT){const T=D.traits[t],G=D.genes[g],a=pairKey.get(t+"|"
   if(!a){app.innerHTML=`<div class="kicker"><a href="${link("t",T.id)}">${esc(T.name)}</a></div><h1>${esc(G[1])} has no call for this trait</h1><p class="dek">The gene is not at a qualifying locus for ${esc(T.name)}, or no source signs it.</p>`;return}
   const p=P(a),dt=DT&&DT.p[t+"|"+g],L=DT&&p.loc>=0?DT.l[p.loc]:null,weak=p.pw>.3,cls=p.s>0?"up":"down";
   if(dt){p.ev=p.ev.map((e,i)=>e[0]==null?e:[dt[0][i],e[1]]); p.sh=dt[1]}
-  const ord=p.ev.map((e,i)=>[i,...e]).sort((x,y)=>(x[2]??9)-(y[2]??9));
+  const bt=dt&&dt[2], BT=bt?D.btests[bt[0]]:null;   // burden test name and p (shard)
+  const key=r=>r.i===p.src?-1:r.z==null||r.f==null?9:r.f;   // the call's source first, then the others by chance wrong, sources without evidence last
+  const ord=p.ev.map((e,i)=>({i,z:e[0],f:e[1]})).concat([{i:6,z:p.bu?p.bu[0]:null,f:p.bu?p.bu[1]:null}]).sort((x,y)=>key(x)-key(y)||x.i-y.i);
   const zone=x=>`<div class="z" style="width:${.2/.5*100}%"></div>`;
   app.innerHTML=`<div class="kicker"><a href="${link("t",T.id)}">${esc(T.name)}</a> · <a href="${link("g",G[0])}">${esc(G[1])}</a> · ${esc(T.cohort)}</div>
   <p class="answer">${weak?`The evidence leans toward more <span class="g">${esc(G[1])}</span> predicting <span class="${cls}">${esc(effect(t,p.s))}</span>, but this is close to a coin flip.`:`More <span class="g">${esc(G[1])}</span> predicts <span class="${cls}">${esc(effect(t,p.s))}</span>.`}</p>
   <div class="meter"><div class="kicker">Chance this direction is wrong</div>
-    <div class="track"><div class="zone" style="left:0;width:40%"></div><div class="pin" style="left:${Math.min(p.pw,.5)/.5*100}%"></div><div class="pinlab num" style="left:${Math.min(p.pw,.5)/.5*100}%">${pct(p.pw)}</div></div>
+    <div class="track"><div class="zone" style="left:0;width:40%"></div><div class="pin" style="left:${Math.min(p.pw,.5)/.5*100}%"></div><div class="pinlab num" style="left:${Math.min(p.pw,.5)/.5*100}%">${fw(p.pw)}</div></div>
     <div class="ticks num"><span>0%</span><span>10%</span><span>20%</span><span>30%</span><span>40%</span><span>50%, a coin flip</span></div></div>
   <section class="sec"><h2>Evidence from each source</h2>    <div class="evrow head"><span>Source</span><span>More gene</span><span>Chance wrong · 0 to 50%</span><span>Strength</span></div>
-    ${ord.map(([i,z,f])=>z==null||f==null?`<div class="evrow none"><span class="s">${SRCS[i]}</span><span>No evidence</span><span></span><span></span></div>`:
-      `<div class="evrow"><span class="s">${SRCS[i]}${i===p.src?"<em>Used for the call</em>":""}</span><span class="${z>0?"up":"down"}">${z>0?"▲ raises":"▼ lowers"}</span>
-       <div class="axis" data-tip="<b>${SRCS[i]}</b>: ${pct(f)} chance wrong">${zone()}<b style="left:${Math.min(f,.5)/.5*100}%;background:var(${z>0?"--up":"--down"});opacity:${i===p.src?1:.75}"></b><span class="dl num" style="${f>.4?`right:calc(${100-Math.min(f,.5)/.5*100}% + 10px)`:`left:calc(${Math.min(f,.5)/.5*100}% + 10px)`}">${pct(f)}</span></div><span class="num" style="color:var(--muted);font-size:13px">${dt?strength(i,z):""}</span></div>${i===p.src?shapBlock(p):""}`).join("")}
-    <div class="evrow burden ${p.lof===0&&!p.bu?"nores":""}"><span class="s">Gene-burden test<em>Exome loss-of-function carriers${p.lof===0&&p.bu?", below genome-wide significance":""}</em>${p.src===6?"<em>Used for the call</em>":""}</span>${p.lof===0&&p.bu?`<span class="${p.bu[0]>0?"up":"down"}">${p.bu[0]>0?"▲ raises":"▼ lowers"}</span><div class="axis" data-tip="<b>Rare-variant burden</b>: ${pct(p.bu[1])} chance wrong">${zone()}<b style="left:${Math.min(p.bu[1],.5)/.5*100}%;background:var(${p.bu[0]>0?"--up":"--down"});opacity:${p.src===6?1:.75}"></b><span class="dl num" style="${p.bu[1]>.4?`right:calc(${100-Math.min(p.bu[1],.5)/.5*100}% + 10px)`:`left:calc(${Math.min(p.bu[1],.5)/.5*100}% + 10px)`}">${pct(p.bu[1])}</span></div><span style="font-size:13px">${p.bu[0]===p.s?"<b>Agrees</b> with the SIGNPOST call":"<b style=\"color:var(--muted)\">Disagrees</b> with the SIGNPOST call"}</span>`:p.lof===0?`<span style="color:var(--muted)">No significant result</span><span></span><span></span>`:
-      `<span class="${p.lof>0?"up":"down"}">${p.lof>0?"▲ raises":"▼ lowers"}</span><span>${p.lof===p.s?"<b>Agrees</b> with the SIGNPOST call":"<b>Disagrees</b> with the SIGNPOST call"}</span><span style="color:var(--muted);font-size:13px">Used in training, so not an independent check</span>`}</div>${p.src===6?`<p class="note" style="margin-top:8px">This call comes from the gene's rare-variant burden test, not from a model, so there is no feature breakdown; the model sources above are shown for comparison.</p>`:""}
+    ${ord.map(({i,z,f})=>z==null||f==null?`<div class="evrow none"><span class="s">${i===6?"Gene-burden test":SRCS[i]}</span><span>No evidence</span><span></span><span></span></div>`:
+      `<div class="evrow${i===p.src?" call":""}"><span class="s">${i===6?"Gene-burden test":SRCS[i]}${i===6&&BT?`<em>${esc(BT)}</em>`:""}${i===p.src?"<em>Used for the call</em>":""}</span><span class="${z>0?"up":"down"}">${z>0?"▲ raises":"▼ lowers"}</span>
+       <div class="axis" data-tip="<b>${i===6?"Gene-burden test":SRCS[i]}</b>: ${fw(f)} chance wrong">${zone()}<b style="left:${Math.min(f,.5)/.5*100}%;background:var(${z>0?"--up":"--down"});opacity:${i===p.src?1:.75}"></b><span class="dl num" style="${f>.4?`right:calc(${100-Math.min(f,.5)/.5*100}% + 10px)`:`left:calc(${Math.min(f,.5)/.5*100}% + 10px)`}">${fw(f)}</span></div><span class="num" style="color:var(--muted);font-size:13px">${i===6?(bt?`P = ${sci(bt[1])}`:""):dt?strength(i,z):""}</span></div>${i===p.src&&i<6?shapBlock(p):""}`).join("")}
   </section>
   ${(X=>X.length?`<section class="sec"><h2>Other cohorts</h2>
     <p class="note">${G[1]} in matching traits from the other cohorts: ${X.filter(x=>x.s===p.s).length} of ${X.length} agree with this call.</p>
     <div class="evrow head"><span>Trait</span><span>More gene</span><span>Chance wrong · 0 to 50%</span><span>Agreement</span></div>
     ${X.map(x=>{const T2=D.traits[x.t],f=x.pw;return `<div class="evrow"><span class="s"><a class="gl" href="${link("p",T2.id,G[0])}">${esc(T2.name)}</a><em>${esc(T2.cohort)}</em></span><span class="${x.s>0?"up":"down"}">${x.s>0?"▲ raises":"▼ lowers"}</span>
-      <div class="axis"><div class="z" style="width:40%"></div><b style="left:${Math.min(f,.5)/.5*100}%;background:var(${x.s>0?"--up":"--down"})"></b><span class="dl num" style="${f>.4?`right:calc(${100-Math.min(f,.5)/.5*100}% + 10px)`:`left:calc(${Math.min(f,.5)/.5*100}% + 10px)`}">${pct(f)}</span></div>
+      <div class="axis"><div class="z" style="width:40%"></div><b style="left:${Math.min(f,.5)/.5*100}%;background:var(${x.s>0?"--up":"--down"})"></b><span class="dl num" style="${f>.4?`right:calc(${100-Math.min(f,.5)/.5*100}% + 10px)`:`left:calc(${Math.min(f,.5)/.5*100}% + 10px)`}">${fw(f)}</span></div>
       <span style="font-size:13px">${x.s===p.s?"<b>Agrees</b>":"<b style=\"color:var(--muted)\">Disagrees</b>"}</span></div>`}).join("")}
   </section>`:"")(cross(t,g))}
   <section class="sec"><h2>Putative causal genes at this locus</h2>
@@ -487,7 +487,7 @@ function pairRender(t,g,DT){const T=D.traits[t],G=D.genes[g],a=pairKey.get(t+"|"
     ${L?`<div class="cand head"><span>Gene</span><span>P(causal)</span><span></span><span>Distance</span><span>pgBoost</span><span>Direction call</span></div>
     ${L.g.map(([cg,pc,d,pg,s,pw])=>{const me=cg===g,has=pairKey.has(t+"|"+cg);return `<div class="cand ${me?"me":""}"><span title="${esc(gname(cg))}">${has&&!me?`<a class="gl" href="${link("p",T.id,gid(cg))}">${esc(gname(cg))}</a>`:`<b>${esc(gname(cg))}</b>`}${rx(cg)}</span>
       <div class="pbar"><i style="width:${pc*100}%"></i></div><span class="num">${Math.round(pc*100)}%</span><span class="num" style="color:var(--muted)">${d==null?"–":d+" kb"}</span><span class="num" style="color:var(--muted)">${pg==null?"no link":pg.toFixed(2)}</span>
-      <span class="${s>0?"up":s<0?"down":""}" style="${s?"":"color:var(--faint)"}">${s?(s>0?"▲ raises":"▼ lowers")+` · <span class="num" style="color:var(--muted)">${pct(pw)} wrong</span>`:"no call"}</span></div>`}).join("")}`:`<p class="note">No locus record.</p>`}
+      <span class="${s>0?"up":s<0?"down":""}" style="${s?"":"color:var(--faint)"}">${s?(s>0?"▲ raises":"▼ lowers")+` · <span class="num" style="color:var(--muted)">${fw(pw)} wrong</span>`:"no call"}</span></div>`}).join("")}`:`<p class="note">No locus record.</p>`}
   </section>`}
 
 // ---------- router
