@@ -70,7 +70,8 @@ h2{font-weight:600;font-size:18px;line-height:1.2;margin:0 0 6px;text-wrap:balan
 .chip{font:inherit;font-size:12.5px;border:1px solid var(--frame);border-radius:0;margin-left:-1px;height:30px;padding:0 13px;color:var(--ink);background:var(--bg);cursor:pointer}
 .chip.on{border-color:var(--ink);background:var(--ink);color:var(--bg);position:relative}
 .chip:hover:not(.on){background:var(--wash)}
-.filters{display:flex;flex-wrap:wrap;gap:8px 22px;align-items:center;margin:0 0 26px}
+.filters{display:flex;flex-wrap:wrap;gap:8px 18px;align-items:center;margin:0 0 26px}
+.filters .chip{padding:0 10px}
 .filters .lab{font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-right:2px}
 /* answer page */
 .answer{font-weight:500;font-size:clamp(28px,3.8vw,40px);line-height:1.18;letter-spacing:-.015em;margin:14px 0 0;max-width:22ch;text-wrap:balance}
@@ -90,7 +91,9 @@ h2{font-weight:600;font-size:18px;line-height:1.2;margin:0 0 6px;text-wrap:balan
 .evrow .s{font-weight:600}
 .evrow .s em{font-style:normal;font-weight:500;font-size:11px;color:var(--muted);display:block;letter-spacing:.02em}
 .evrow.none{color:var(--faint)}
-.evrow.call{background:var(--hl);margin-inline:-12px;padding-inline:12px}
+.evrow.call{border-bottom:1px solid var(--ink)}
+.evrow.sub{font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);font-weight:600;min-height:49px;box-sizing:border-box}
+.evrow.oth .s{font-weight:500;color:var(--muted)}
 .shap{padding:6px 0 18px 186px;border-bottom:1px solid var(--rule)}
 .shead,.srow{display:grid;grid-template-columns:minmax(0,260px) 76px minmax(0,1fr);gap:14px;align-items:center}
 .shead{font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);font-weight:600;padding-bottom:6px}
@@ -160,7 +163,6 @@ th:first-child,td:first-child{padding-left:12px} td.dir{white-space:nowrap;font-
 .ev i.ch{outline:1.5px solid var(--ink);outline-offset:1px}
 .evh{display:flex;gap:4px}
 .evh span{width:15px;font-size:9px;letter-spacing:0;text-transform:none;color:var(--muted);writing-mode:vertical-rl;transform:rotate(180deg);height:46px;text-align:left;font-weight:500}
-.lof{font-size:12px;color:var(--muted);white-space:nowrap}
 .more{margin-top:22px}
 .btn{font:inherit;font-size:13px;border:1px solid var(--ink);background:var(--bg);color:var(--ink);padding:7px 16px;border-radius:0;cursor:pointer}
 .btn:hover{background:var(--wash)}
@@ -200,7 +202,7 @@ svg .row{cursor:pointer}
 
 <script>
 const SRCS=["Fine-mapped eQTL","TWAS","SMR + HEIDI","Borzoi","Coding variant","pQTL","Rare-variant burden"], SHORT=["eQTL","TWAS","SMR","Borzoi","Coding","pQTL","Burden"];
-const CLS={reg_linked:"Regulatory, pgBoost-linked",reg_unlinked:"Regulatory, no pgBoost link",coding:"Coding variant",rare_noncoding:"Rare non-coding",no_variant:"No lead variant"};
+const CLS={reg_linked:"Regulatory, enhancer-linked (pgBoost)",reg_unlinked:"Regulatory, unlinked",coding:"Coding variant",rare_noncoding:"Rare non-coding",no_variant:"No lead variant"};
 const OBS=[[.10,"7.9%"],[.20,"17.7%"],[.30,"25.0%"],[.40,"29.1%"]];
 let D=null, byT=[], byG=new Map(), gIdx=new Map(), tIdx=new Map(), pairKey=new Map();
 const $=s=>document.querySelector(s), app=$("#app");
@@ -208,10 +210,9 @@ const esc=s=>String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&g
 const pct=(v,d=1)=>v==null?"–":(v*100).toFixed(d).replace(/\.0$/,"")+"%";
 const fw=v=>v==null?"–":v<.05?"<5%":pct(v);   // chance wrong: below 5% is shown as <5% (the replication error rate of a burden sign; finer values are not meaningful)
 const sci=v=>{if(v==null) return "–"; if(v>=1e-3) return v.toPrecision(2); const e=Math.floor(Math.log10(v)), m=v/10**e, SUP={"-":"⁻",0:"⁰",1:"¹",2:"²",3:"³",4:"⁴",5:"⁵",6:"⁶",7:"⁷",8:"⁸",9:"⁹"}; return `${m.toFixed(1).replace(/\.0$/,"")}×10${String(e).split("").map(c=>SUP[c]).join("")}`};
-const tier=pw=>pw<=.10?"High confidence":pw<=.20?"Moderate confidence":pw<=.30?"Low confidence":"Close to a coin flip";
 const obs=pw=>{for(const [t,o] of OBS) if(pw<=t) return o; return "about 45%"};
 const P=a=>({t:a[0],g:a[1],s:a[2],pw:a[3],src:a[4],pc:a[5],loc:a[6],cls:a[7],lof:a[8],ev:a[9].map(v=>v==null?[null,null]:[Math.sign(v),Math.abs(v)/1000]),bu:a[10]==null?null:[Math.sign(a[10]),Math.abs(a[10])/1000],sh:null});
-const BUILD="2026-11-09d";   // cache-busting for the data files: trait indices change between builds, so a stale shard would not match core.json
+const BUILD="2026-11-09e";   // cache-busting for the data files: trait indices change between builds, so a stale shard would not match core.json
 const DET={}; const loadDetail=t=>DET[t%D.nshard]||(DET[t%D.nshard]=(async()=>{const f=q=>fetch(`d/${String(t%D.nshard).padStart(2,"0")}.json?v=${BUILD}${q}`,{cache:q?"no-store":"default"}).then(r=>r.ok?r.json():null).catch(()=>null);
   let S=await f(""); if(S&&D.build&&S.build!==D.build) S=await f("&r="+Date.now());   // shard from another build than core.json (stale cache): refetch bypassing the cache
   if(S&&D.build&&S.build!==D.build&&!sessionStorage.getItem("sp-reloaded")){sessionStorage.setItem("sp-reloaded","1"); location.reload(); return null}   // still mismatched: the page itself is stale, reload once
@@ -258,23 +259,27 @@ function aboutPage(){
   <p class="dek" style="max-width:40em">SIGNPOST predicts whether more of a gene raises or lowers a human trait, for genes at genome-wide significant loci, and says how likely each call is to be wrong.</p>
   <section class="sec" style="margin-top:56px"><h2>How to read a call</h2><dl>
     <dt>Direction</dt><dd>The effect of more of the gene (higher expression or protein) on the trait. Loss-of-function carriers are expected to show the opposite.</dd>
-    <dt>P(wrong)</dt><dd>The chance the direction is wrong. Each source's model is trained against gene-burden tests in exome data, then recalibrated against genome-wide burden; the call uses the most confident source, and a genome-wide significant gene-burden test sets the call directly. Values below 5% are shown as &lt;5%.</dd>
-    <dt>P(causal)</dt><dd>The chance the gene is the one acting at its locus, shared among nearby protein-coding genes, from distance, enhancer–gene links (ENCODE-rE2G, pgBoost), credible-set position and gene annotations, learned at loci where a coding variant names the gene.</dd>
+    <dt>P(wrong)</dt><dd>The chance the direction is wrong, calibrated against gene-burden tests. Values below 5% are shown as &lt;5%.</dd>
+    <dt>P(causal)</dt><dd>The chance the gene is the one acting at its locus, shared among nearby protein-coding genes, from distance, enhancer–gene links, credible-set position and gene annotations, learned at loci where a coding variant names the gene.</dd>
     <dt>Loci</dt><dd>Only credible sets whose lead variant has p &lt; 5×10⁻⁸ and minor allele frequency ≥ 1%.</dd>
-    <dt>Cohorts</dt><dd>Pan-UKB (158 traits), FinnGen R12 (207 endpoints) and a batch of 92 Open Targets studies. All of Us is used only to check accuracy.</dd>
+    <dt>Cohorts</dt><dd>${(n=>`Pan-UKB (${n("Pan-UKB")} traits), FinnGen R12 (${n("FinnGen")} endpoints) and a batch of ${n("Open Targets")} Open Targets studies`)(c=>D.traits.filter(T=>T.cohort===c).length)}, each with at least one call at 30% chance wrong or better. All of Us is used only to check accuracy.</dd>
   </dl></section>
   <section class="sec"><h2>Accuracy for gene-trait sign prediction across three cohorts</h2>
-    <p class="note">AUC of each source's P(wrong) for a wrong sign at common regulatory loci, against gene-burden signs, with the gene's locus held out from training. All of Us is scored with models trained without its genes.</p>
+    <p class="note">How well each source's P(wrong) separates right from wrong signs against gene-burden tests, with the locus held out.</p>
     <div class="fig"><div class="aucg" id="aucg"></div><div class="legend"><span><svg width="12" height="12" style="vertical-align:middle;margin-right:6px"><circle cx="6" cy="6" r="5" style="fill:var(--c-min)"/></svg>P(wrong) model, 95% bootstrap interval</span><span><svg width="12" height="12" style="vertical-align:middle;margin-right:6px"><path d="M2 2L10 10M10 2L2 10" style="stroke:var(--muted);stroke-width:1.6"/></svg>Raw strength of the source</span></div></div></section>
   <section class="sec"><h2>False sign rate against P(wrong)</h2>
-    <p class="note">Burden-labelled pairs with a qualifying lead, Pan-UKB, FinnGen and All of Us pooled, locus held out; all lead-variant classes, or common regulatory loci only. Each source's pairs are ranked by its raw strength or by its model's P(wrong); the curve is the false sign rate of the pairs selected so far.</p>
+    <p class="note">False sign rate among burden-labelled pairs, ranked by each source's raw strength or its P(wrong), with the locus held out.</p>
     <div class="fig"><div class="ctl"><span class="tabs" id="fsrt"><button class="chip" data-v="Raw method">Raw strength</button><button class="chip on" data-v="SIGNPOST">SIGNPOST P(wrong)</button></span><span class="tabs" id="fsrl"><button class="chip on" data-v="all">All loci</button><button class="chip" data-v="common regulatory">Common regulatory loci</button></span></div><div id="fsrc"></div></div></section>
   <section class="sec"><h2>Causal gene ranking at burden-gene loci</h2>
-    <p class="note">Loci that contain a gene with a significant gene-burden result, held out by genomic block. Rank: share of loci where that gene is among the top k candidates. Calibration: predicted P(causal) against the observed share of burden genes among candidates.</p>
+    <p class="note">Loci holding a gene with a significant gene-burden result: how often P(causal) ranks that gene near the top.</p>
     <div class="fig"><div class="ctl"><span class="tabs" id="cvt"><button class="chip on" data-v="rank">Rank</button><button class="chip" data-v="cal">Calibration</button></span><span class="tabs" id="cct"><button class="chip on" data-v="Pan-UKB">Pan-UKB</button><button class="chip" data-v="FinnGen">FinnGen</button></span></div><div id="causc"></div><p class="cap" id="causcap"></p></div></section>
   <section class="sec"><h2>Drug target consistency with predicted sign</h2>
-    <p class="note">Drugs on their targets at common regulatory loci, indication one of the trait's own disease terms, Pan-UKB, FinnGen and the Open Targets batch pooled, burden-labelled pairs excluded. A target is consistent when the drug's action, applied to the predicted direction, moves the trait the way the indication wants. Targets ranked by P(causal) × P(right); 95% Wilson bands.</p>
-    <div class="fig"><div id="drugc"></div><p class="cap" id="drugcap">The dashed lines are the ceilings of each test: the concordance obtained when the predicted sign is replaced by the gene-burden sign. Approved drugs reach 88% this way and trial-stage drugs about 61%, so the approved set is the informative one; trial-stage drugs mostly add label noise.</p></div></section>
+    <p class="note">A target is consistent when the drug's action, applied to the predicted direction, moves the trait the way the indication wants. Targets ranked by P(causal) × P(right).</p>
+    <div class="fig"><div id="drugc"></div><p class="cap" id="drugcap">Dashed lines: concordance when the predicted sign is replaced by the gene-burden sign.</p></div></section>
+  <section class="sec"><h2>Download</h2><dl>
+    <dt><a href="signpost_calls.csv" download>signpost_calls.csv</a></dt><dd>The ${D.pairs.length.toLocaleString()} calls on this site, at 30% chance wrong or better (CSV, 8 MB).</dd>
+    <dt><a href="signpost_all_pairs.csv.gz" download>signpost_all_pairs.csv.gz</a></dt><dd>Every scored gene–trait pair at qualifying loci, including calls close to a coin flip (gzipped CSV, 14 MB).</dd>
+  </dl><p class="note">One row per gene and trait: direction of more gene, chance wrong, the source that made the call, P(causal), lead variant, each source's strength and chance wrong, and the gene-burden test.</p></section>
   <section class="sec"><h2>Data</h2><p>GWAS summary statistics from Pan-UKB, FinnGen R12 and the GWAS Catalog through Open Targets; eQTL, pQTL and colocalisation resources as described in the methods; drug mechanisms and clinical stages from Open Targets (ChEMBL); protein function summaries from UniProt (CC BY 4.0). Prototype for research use only; not for clinical decisions.</p></section></div>`;
   loadAbout().then(A=>{if(!A){app.insertAdjacentHTML("beforeend",`<p class="note">The figure data did not load.</p>`);return}
     // 1. AUC
@@ -326,13 +331,13 @@ function indMark(g,p){const d=drugOf(g); if(!d||!(((D.indic||{})[g])||[]).includ
 function drugSummary(g){const d=drugOf(g); if(!d||!d[3]||!d[3].length) return ""; const G=D.genes[g], all=byG.get(g).map(P), R=all.filter(p=>p.pw<=.3).length?all.filter(p=>p.pw<=.3):all;
   return `<div class="dsum">`+d[3].map(dir=>{const lo=R.filter(p=>dir*p.s<0).length, M=d[3].length===1?R.map(p=>indMark(g,p)).filter(Boolean):[], ok=M.filter(m=>m.ok).length, bad=M.filter(m=>m.ok===false).length;
     return `<p><b>${dir<0?"Inhibiting":"Activating"} ${esc(G[1])}</b> is predicted to lower ${lo} trait${lo===1?"":"s"} and raise ${R.length-lo}${M.length?`; ${M.length} match${M.length===1?"es":""} an indication of its drugs, ${ok===M.length?"all consistent":`${ok} consistent and ${bad} raising its risk`} (✓ / ✗ in the chart below)`:""}.</p>`}).join("")+
-    `<p class="dcap">Each drug's action applied to SIGNPOST's direction. Agreement with approved drugs is highest for the most confident calls and falls toward 60% over all targets (see About).</p></div>`}
+    `<p class="dcap">Each drug's action applied to SIGNPOST's direction.</p></div>`}
 function fmtv(v){if(v==null||v===-1||v===-99) return "none"; if(Number.isInteger(v)) return v.toLocaleString(); const a=Math.abs(v); return a>=100?Math.round(v).toLocaleString():a>=10?v.toFixed(1):a>=1?v.toFixed(2):v.toFixed(3)}
 function shapBlock(p){const S=p.sh; if(!S||!S.length||!D.features) return "";
   const mx=Math.max(...S.map(x=>Math.abs(x[1])),.01);
   return `<div class="shap"><div class="shead"><span>What drove this source's call</span><span>Value</span><span class="sax"><span>◂ more confident</span><span>less confident ▸</span></span></div>${
     S.map(([f,c,v])=>{const [,lab,fam]=D.features[f],w=Math.abs(c)/mx*50;return `<div class="srow"><span class="sl">${esc(lab)}<em>${esc(fam)}</em></span><span class="sv num">${fmtv(v)}</span><div class="sbar" data-tip="<b>${esc(lab)}</b><br>Value ${fmtv(v)}<br>${c<0?"Makes the call more confident":"Makes the call less confident"} (log-odds ${c>0?"+":"−"}${Math.abs(c).toFixed(2)})"><i class="${c<0?"conf":"unc"}" style="${c<0?"right":"left"}:50%;width:${w}%"></i></div></div>`}).join("")}
-    <p class="snote">Top feature contributions (SHAP) to this source's P(wrong) before recalibration. Bar length is relative influence.</p></div>`}
+    </div>`}
 const gname=g=>D.genes[g][1], gid=g=>D.genes[g][0];
 const tname=t=>D.traits[t].name||D.traits[t].id;
 function lc(n){return /^[A-Z][a-z]/.test(n)?n[0].toLowerCase()+n.slice(1):n}
@@ -348,9 +353,6 @@ function evCells(p,chosen=true){return `<span class="ev">`+ev7(p).map(([z,f],i)=
   `<i class="${chosen&&i===p.src?"ch":""}" style="background:var(${z>0?"--up":"--down"});opacity:${conf(f).toFixed(2)}" data-tip="<b>${SRCS[i]}</b>${i===p.src?" · used for the call":""}<br>More gene, ${z>0?"trait up":"trait down"}<br>${fw(f)} chance wrong"></i>`).join("")+`</span>`}
 function evHead(){return `<span class="evh">${SHORT.map(s=>`<span>${s}</span>`).join("")}</span>`}
 function link(kind,...a){return "#"+kind+"_"+a.join("~")}
-function lofTxt(p){if(p.bu) return `<span data-tip="<b>Gene-burden test</b><br>${fw(p.bu[1])} chance wrong${p.src===6?"<br>Used for the call":""}">${p.bu[0]===p.s?"✓ agrees":"✗ disagrees"} <span style="color:var(--faint)">${fw(p.bu[1])}</span></span>`;
-  return `<span style="color:var(--faint)">no result</span>`}
-
 // ---------- search
 function searchIndex(q){q=q.trim().toLowerCase(); if(!q) return [];
   const out=[];
@@ -371,12 +373,12 @@ function wireSearch(box){const inp=box.querySelector("input"); let sel=-1, res=[
 
 // ---------- home
 function home(){
-  const cats=new Map(); D.traits.forEach((T,t)=>{if(!byT[t].some(a=>a[3]<=.3)) return; /* browse lists only show traits with a call at 30% chance wrong or better; the others stay reachable through search */ const k=T.cohort+"|"+T.cat; if(!cats.has(k)) cats.set(k,[]); cats.get(k).push(t)});
+  const cats=new Map(); D.traits.forEach((T,t)=>{const k=T.cohort+"|"+T.cat; if(!cats.has(k)) cats.set(k,[]); cats.get(k).push(t)});
   const conf20=D.pairs.filter(a=>a[3]<=.2).length;
   const cohortList=c=>[...cats].filter(([k])=>k.startsWith(c)).sort((a,b)=>b[1].length-a[1].length).map(([k,ts])=>`<div class="cat"><h3>${esc(k.split("|")[1])}</h3>${
-     ts.sort((a,b)=>tname(a).localeCompare(tname(b))).map(t=>`<a href="${link("t",D.traits[t].id)}"><span class="n">${esc(tname(t))}</span><span class="c num">${byT[t].filter(p=>p[3]<=.3).length}</span></a>`).join("")}</div>`).join("");
+     ts.sort((a,b)=>tname(a).localeCompare(tname(b))).map(t=>`<a href="${link("t",D.traits[t].id)}"><span class="n">${esc(tname(t))}</span><span class="c num">${byT[t].length}</span></a>`).join("")}</div>`).join("");
   app.innerHTML=`
-  <h1>Signed gene effects across 430 human traits</h1>
+  <h1>Signed gene effects across ${D.traits.length.toLocaleString()} human traits</h1>
   <p class="dek">For ${byG.size.toLocaleString()} genes at genome-wide significant loci, SIGNPOST predicts whether more of the gene raises or lowers each trait, how likely that call is wrong, and how likely the gene is the one acting at the locus.</p>
   <div class="sbox big" id="bigsearch" style="max-width:620px;margin-top:44px"><input id="q1" type="search" placeholder="Try ANGPTL3, LDL direct or asthma" autocomplete="off" aria-label="Search a gene or trait"></div>  <section class="sec"><h2>Browse traits</h2><p class="note">Number of genes with a call at 30% or better.</p>
     <div class="tabs" id="ctabs"><button class="chip on" data-c="Pan-UKB">Pan-UKB</button><button class="chip" data-c="FinnGen">FinnGen</button><button class="chip" data-c="Open Targets">Open Targets</button></div>
@@ -387,30 +389,30 @@ function home(){
 // ---------- trait page (B)
 function traitPage(t){const T=D.traits[t], rows=byT[t].map(P), hasX=((D.matches||{})[t]||[]).length>0;
   const n=[.1,.2,.3].map(c=>rows.filter(p=>p.pw<=c).length);
-  const t0=[.3,.4].find(c=>rows.some(p=>p.pw<=c))??.4; let st={tier:t0,cls:"all",sort:"pw",lim:50};   // traits whose calls all sit between 30% and 40% open on the 40% tier instead of an empty table
+  const t0=.3; let st={tier:t0,cls:"all",bur:"all",sort:"pw",lim:50};
   app.innerHTML=`<div class="kicker"><a href="#home">Traits</a> · ${esc(T.cohort)} · ${esc(T.cat)}</div>
   <h1>${esc(T.name)}</h1>
   <section class="sec" style="margin-top:56px">
     <div class="filters">
-      <span><span class="lab">Chance wrong</span> <span class="tabs" id="ft">${[[.1,"≤ 10%"],[.2,"≤ 20%"],[.3,"≤ 30%"],[.4,"≤ 40%"]].map(([v,l])=>`<button class="chip ${v===t0?"on":""}" data-v="${v}">${l}</button>`).join("")}</span></span>
-      <span><span class="lab">Lead variant</span> <span class="tabs" id="fc">${[["all","All"],["reg_linked","pgBoost-linked"],["reg_unlinked","No link"],["coding","Coding"]].map(([v,l])=>`<button class="chip ${v==="all"?"on":""}" data-v="${v}">${l}</button>`).join("")}</span></span>
+      <span><span class="lab">Chance wrong</span> <span class="tabs" id="ft">${[[.1,"≤ 10%"],[.2,"≤ 20%"],[.3,"≤ 30%"]].map(([v,l])=>`<button class="chip ${v===t0?"on":""}" data-v="${v}">${l}</button>`).join("")}</span></span>
+      <span><span class="lab">Lead variant</span> <span class="tabs" id="fc">${[["all","All"],["reg_linked","Enhancer-linked"],["reg_unlinked","Unlinked"],["coding","Coding"]].map(([v,l])=>`<button class="chip ${v==="all"?"on":""}" data-v="${v}">${l}</button>`).join("")}</span></span>
+      <span><span class="lab">Burden test</span> <span class="tabs" id="fb">${[["all","All"],["call","Drives the call"],["none","Not present"]].map(([v,l])=>`<button class="chip ${v==="all"?"on":""}" data-v="${v}">${l}</button>`).join("")}</span></span>
     </div>
-    ${t0>.3?`<p class="note">No call for this trait reaches 30% chance wrong or better; showing the weaker calls (up to 40%), which are close to a coin flip.</p>`:""}
     <div class="evkey">Evidence from each source: ${evCells({ev:[[1,.05],[-1,.2],[1,.4],[null,null],[null,null],[null,null]],src:0},true)} <span><span class="sw" style="background:var(--up)"></span>More gene, ${esc(T.kind==="q"?"higher":"higher risk")}</span><span><span class="sw" style="background:var(--down)"></span>More gene, ${esc(T.kind==="q"?"lower":"lower risk")}</span></div>
-    <div class="tw"><table><thead><tr><th>Gene</th><th>More gene</th><th class="sortable sorted" data-s="pw">Chance wrong<br><span style="font-weight:400;letter-spacing:0;text-transform:none">0 · 20% · 50%</span></th><th class="sortable" data-s="pc">Causal at locus</th><th>${evHead()}</th>${hasX?`<th>Other cohorts</th>`:""}<th>Locus</th><th>Burden test<br><span style="font-weight:400;letter-spacing:0;text-transform:none">agreement, % wrong</span></th></tr></thead><tbody id="tb"></tbody></table></div>
+    <div class="tw"><table><thead><tr><th>Gene</th><th>More gene</th><th class="sortable sorted" data-s="pw">Chance wrong<br><span style="font-weight:400;letter-spacing:0;text-transform:none">0 · 20% · 50%</span></th><th class="sortable" data-s="pc">Causal at locus</th><th>${evHead()}</th>${hasX?`<th>Other cohorts</th>`:""}<th>Locus</th></tr></thead><tbody id="tb"></tbody></table></div>
     <div class="more" id="more"></div></section>`;
-  const draw=()=>{let r=rows.filter(p=>p.pw<=st.tier&&(st.cls==="all"||p.cls===st.cls));
+  const draw=()=>{let r=rows.filter(p=>p.pw<=st.tier&&(st.cls==="all"||p.cls===st.cls)&&(st.bur==="all"||(st.bur==="call"?p.src===6:!p.bu)));
     r.sort(st.sort==="pw"?(a,b)=>a.pw-b.pw:(a,b)=>(b.pc??-1)-(a.pc??-1)||a.pw-b.pw);
     const show=r.slice(0,st.lim);
     $("#tb").innerHTML=show.map(p=>{const L=p.loc>=0&&D.locpos[p.loc]?{c:D.locpos[p.loc][0],p:D.locpos[p.loc][1]}:null;return `<tr tabindex="0" data-h="${link("p",T.id,gid(p.g))}"><td class="gn">${esc(gname(p.g))}${rx(p.g)}</td>
       <td class="dir ${p.s>0?"up":"down"}">${p.s>0?"▲ raises":"▼ lowers"}</td>
-      <td><div class="dotax" data-tip="<b>${fw(p.pw)}</b> chance the direction is wrong<br>${tier(p.pw)}"><b style="left:${Math.min(p.pw,.5)/.5*100}%;opacity:${p.pw>.3?.45:1}"></b></div></td>
+      <td><div class="dotax" data-tip="<b>${fw(p.pw)}</b> chance the direction is wrong"><b style="left:${Math.min(Math.max(p.pw,.05),.5)/.5*100}%;opacity:${p.pw>.3?.45:1}"></b></div></td>
       <td><div class="mbar"><div class="pbar"><i style="width:${(p.pc??0)*100}%"></i></div><span class="num">${p.pc==null?"–":Math.round(p.pc*100)+"%"}</span></div></td>
-      <td>${evCells(p)}</td>${hasX?`<td>${crossCell(p)}</td>`:""}<td class="num" style="font-size:12.5px;color:var(--muted);white-space:nowrap">${L&&L.c?`chr${L.c}:${(L.p/1e6).toFixed(1)} Mb`:"–"}</td><td class="lof">${lofTxt(p)}</td></tr>`}).join("")||`<tr><td colspan="${hasX?8:7}" style="color:var(--muted);padding:28px 0">No genes pass these filters.</td></tr>`;
+      <td>${evCells(p)}</td>${hasX?`<td>${crossCell(p)}</td>`:""}<td class="num" style="font-size:12.5px;color:var(--muted);white-space:nowrap">${L&&L.c?`chr${L.c}:${(L.p/1e6).toFixed(1)} Mb`:"–"}</td></tr>`}).join("")||`<tr><td colspan="${hasX?7:6}" style="color:var(--muted);padding:28px 0">No genes pass these filters.</td></tr>`;
     $("#more").innerHTML=r.length>st.lim?`<button class="btn" id="mb">Show ${Math.min(50,r.length-st.lim)} more of ${r.length-st.lim}</button>`:`<span class="note">${r.length} genes shown.</span>`;
     $("#mb")?.addEventListener("click",()=>{st.lim+=50;draw()})};
   const chips=(id,key,conv)=>$(id).addEventListener("click",e=>{const b=e.target.closest("button"); if(!b) return; $(id).querySelectorAll(".chip").forEach(x=>x.classList.toggle("on",x===b)); st[key]=conv(b.dataset.v); st.lim=50; draw()});
-  chips("#ft","tier",Number); chips("#fc","cls",String);
+  chips("#ft","tier",Number); chips("#fc","cls",String); chips("#fb","bur",String);
   document.querySelectorAll("th.sortable").forEach(th=>th.addEventListener("click",()=>{st.sort=th.dataset.s;document.querySelectorAll("th.sortable").forEach(x=>x.classList.toggle("sorted",x===th));draw()}));
   $("#tb").addEventListener("click",e=>{const tr=e.target.closest("tr[data-h]"); if(tr) location.hash=tr.dataset.h.slice(1)});
   $("#tb").addEventListener("keydown",e=>{const tr=e.target.closest("tr[data-h]"); if(tr&&e.key==="Enter") location.hash=tr.dataset.h.slice(1)});
@@ -439,7 +441,7 @@ function genePage(g){const G=D.genes[g]; let all=byG.get(g).map(P); let st={coh:
     s+=`<text x="${X(-.5)}" y="${top-26}" class="tiny">◂ more gene, trait down</text><text x="${X(.5)}" y="${top-26}" class="tiny" text-anchor="end">more gene, trait up ▸</text>`;
     SHORT.forEach((n,i)=>s+=`<text x="${ex+i*24+8}" y="${top-26}" class="tiny" text-anchor="start" transform="rotate(-45 ${ex+i*24+8} ${top-26})">${n}</text>`);
     s+=`<text x="${ex+7*24+18}" y="${top-26}" class="tiny">Chance wrong</text>`+(drugOf(g)&&(D.indic||{})[g]?`<text x="${ex+7*24+96}" y="${top-14}" class="tiny" transform="rotate(-45 ${ex+7*24+96} ${top-14})">Indication</text>`:"");
-    r.forEach((p,i)=>{const y=top+i*rh,T=D.traits[p.t],x=X(p.s*(.5-p.pw)),rad=3+8*(p.pc??0);
+    r.forEach((p,i)=>{const y=top+i*rh,T=D.traits[p.t],x=X(p.s*(.5-Math.max(p.pw,.05))),rad=3+8*(p.pc??0);
       s+=`<g class="row" data-h="${link("p",T.id,gid(g))}"><rect class="bgr" x="0" y="${y-rh/2}" width="${W}" height="${rh}" style="fill:transparent"/>
       <text x="${lw}" y="${y+4}" class="tl" text-anchor="end">${esc(T.name.length>44?T.name.slice(0,42)+"…":T.name)}</text>
       <text x="0" y="${y+4}" class="tiny">${{"FinnGen":"FG","Open Targets":"OT"}[T.cohort]||"UKB"}</text>
@@ -468,23 +470,22 @@ function pairRender(t,g,DT){const T=D.traits[t],G=D.genes[g],a=pairKey.get(t+"|"
   app.innerHTML=`<div class="kicker"><a href="${link("t",T.id)}">${esc(T.name)}</a> · <a href="${link("g",G[0])}">${esc(G[1])}</a> · ${esc(T.cohort)}</div>
   <p class="answer">${weak?`The evidence leans toward more <span class="g">${esc(G[1])}</span> predicting <span class="${cls}">${esc(effect(t,p.s))}</span>, but this is close to a coin flip.`:`More <span class="g">${esc(G[1])}</span> predicts <span class="${cls}">${esc(effect(t,p.s))}</span>.`}</p>
   <div class="meter"><div class="kicker">Chance this direction is wrong</div>
-    <div class="track"><div class="zone" style="left:0;width:40%"></div><div class="pin" style="left:${Math.min(p.pw,.5)/.5*100}%"></div><div class="pinlab num" style="left:${Math.min(p.pw,.5)/.5*100}%">${fw(p.pw)}</div></div>
+    <div class="track"><div class="zone" style="left:0;width:40%"></div><div class="pin" style="left:${Math.min(Math.max(p.pw,.05),.5)/.5*100}%"></div><div class="pinlab num" style="left:${Math.min(Math.max(p.pw,.05),.5)/.5*100}%">${fw(p.pw)}</div></div>
     <div class="ticks num"><span>0%</span><span>10%</span><span>20%</span><span>30%</span><span>40%</span><span>50%, a coin flip</span></div></div>
   <section class="sec"><h2>Evidence from each source</h2>    <div class="evrow head"><span>Source</span><span>More gene</span><span>Chance wrong · 0 to 50%</span><span>Strength</span></div>
-    ${ord.map(({i,z,f})=>z==null||f==null?`<div class="evrow none"><span class="s">${i===6?"Gene-burden test":SRCS[i]}</span><span>No evidence</span><span></span><span></span></div>`:
-      `<div class="evrow${i===p.src?" call":""}"><span class="s">${i===6?"Gene-burden test":SRCS[i]}${i===6&&BT?`<em>${esc(BT)}</em>`:""}${i===p.src?"<em>Used for the call</em>":""}</span><span class="${z>0?"up":"down"}">${z>0?"▲ raises":"▼ lowers"}</span>
-       <div class="axis" data-tip="<b>${i===6?"Gene-burden test":SRCS[i]}</b>: ${fw(f)} chance wrong">${zone()}<b style="left:${Math.min(f,.5)/.5*100}%;background:var(${z>0?"--up":"--down"});opacity:${i===p.src?1:.75}"></b><span class="dl num" style="${f>.4?`right:calc(${100-Math.min(f,.5)/.5*100}% + 10px)`:`left:calc(${Math.min(f,.5)/.5*100}% + 10px)`}">${fw(f)}</span></div><span class="num" style="color:var(--muted);font-size:13px">${i===6?(bt?`P = ${sci(bt[1])}`:""):dt?strength(i,z):""}</span></div>${i===p.src&&i<6?shapBlock(p):""}`).join("")}
+    ${ord.map(({i,z,f},k)=>(k===1?`<div class="evrow sub"><span>Other sources</span><span></span><span></span><span></span></div>`:"")+(z==null||f==null?`<div class="evrow none"><span class="s">${i===6?"Gene-burden test":SRCS[i]}</span><span>No evidence</span><span></span><span></span></div>`:
+      `<div class="evrow${i===p.src?" call":" oth"}"><span class="s">${i===6?"Gene-burden test":SRCS[i]}</span><span class="${z>0?"up":"down"}">${z>0?"▲ raises":"▼ lowers"}</span>
+       <div class="axis" data-tip="<b>${i===6?"Gene-burden test":SRCS[i]}</b>: ${fw(f)} chance wrong">${zone()}<b style="left:${Math.min(Math.max(f,.05),.5)/.5*100}%;background:var(${z>0?"--up":"--down"});opacity:${i===p.src?1:.75}"></b><span class="dl num" style="${f>.4?`right:calc(${100-Math.min(Math.max(f,.05),.5)/.5*100}% + 10px)`:`left:calc(${Math.min(Math.max(f,.05),.5)/.5*100}% + 10px)`}">${fw(f)}</span></div><span class="num" style="color:var(--muted);font-size:13px;white-space:nowrap">${i===6?(bt?`<span data-tip="${esc(BT)}">P = ${sci(bt[1])}</span>`:""):dt?strength(i,z):""}</span></div>${i===p.src&&i<6?shapBlock(p):""}`)).join("")}
   </section>
   ${(X=>X.length?`<section class="sec"><h2>Other cohorts</h2>
-    <p class="note">${G[1]} in matching traits from the other cohorts: ${X.filter(x=>x.s===p.s).length} of ${X.length} agree with this call.</p>
     <div class="evrow head"><span>Trait</span><span>More gene</span><span>Chance wrong · 0 to 50%</span><span>Agreement</span></div>
     ${X.map(x=>{const T2=D.traits[x.t],f=x.pw;return `<div class="evrow"><span class="s"><a class="gl" href="${link("p",T2.id,G[0])}">${esc(T2.name)}</a><em>${esc(T2.cohort)}</em></span><span class="${x.s>0?"up":"down"}">${x.s>0?"▲ raises":"▼ lowers"}</span>
-      <div class="axis"><div class="z" style="width:40%"></div><b style="left:${Math.min(f,.5)/.5*100}%;background:var(${x.s>0?"--up":"--down"})"></b><span class="dl num" style="${f>.4?`right:calc(${100-Math.min(f,.5)/.5*100}% + 10px)`:`left:calc(${Math.min(f,.5)/.5*100}% + 10px)`}">${fw(f)}</span></div>
+      <div class="axis"><div class="z" style="width:40%"></div><b style="left:${Math.min(Math.max(f,.05),.5)/.5*100}%;background:var(${x.s>0?"--up":"--down"})"></b><span class="dl num" style="${f>.4?`right:calc(${100-Math.min(Math.max(f,.05),.5)/.5*100}% + 10px)`:`left:calc(${Math.min(Math.max(f,.05),.5)/.5*100}% + 10px)`}">${fw(f)}</span></div>
       <span style="font-size:13px">${x.s===p.s?"<b>Agrees</b>":"<b style=\"color:var(--muted)\">Disagrees</b>"}</span></div>`}).join("")}
   </section>`:"")(cross(t,g))}
   <section class="sec"><h2>Putative causal genes at this locus</h2>
-    <p class="note">${L&&L.c?`Lead variant chr${L.c}:${L.p.toLocaleString()} ${esc(L.v)}, posterior inclusion probability ${L.pip}. `:""}Lead-variant class: ${esc(CLS[p.cls]||p.cls)}. P(causal) shares one signal among nearby protein-coding genes, from distance, enhancer–gene links (ENCODE-rE2G, pgBoost), credible-set position and gene annotations, learned at loci where a coding variant names the gene.</p>
-    ${L?`<div class="cand head"><span>Gene</span><span>P(causal)</span><span></span><span>Distance</span><span>pgBoost</span><span>Direction call</span></div>
+    <p class="note">${L&&L.c?`chr${L.c}:${L.p.toLocaleString()} ${esc(L.v)} · PIP ${L.pip} · `:""}${esc(CLS[p.cls]||p.cls)}</p>
+    ${L?`<div class="cand head"><span>Gene</span><span>P(causal)</span><span></span><span>Distance</span><span>rE2G link</span><span>Direction call</span></div>
     ${L.g.map(([cg,pc,d,pg,s,pw])=>{const me=cg===g,has=pairKey.has(t+"|"+cg);return `<div class="cand ${me?"me":""}"><span title="${esc(gname(cg))}">${has&&!me?`<a class="gl" href="${link("p",T.id,gid(cg))}">${esc(gname(cg))}</a>`:`<b>${esc(gname(cg))}</b>`}${rx(cg)}</span>
       <div class="pbar"><i style="width:${pc*100}%"></i></div><span class="num">${Math.round(pc*100)}%</span><span class="num" style="color:var(--muted)">${d==null?"–":d+" kb"}</span><span class="num" style="color:var(--muted)">${pg==null?"no link":pg.toFixed(2)}</span>
       <span class="${s>0?"up":s<0?"down":""}" style="${s?"":"color:var(--faint)"}">${s?(s>0?"▲ raises":"▼ lowers")+` · <span class="num" style="color:var(--muted)">${fw(pw)} wrong</span>`:"no call"}</span></div>`}).join("")}`:`<p class="note">No locus record.</p>`}
