@@ -41,6 +41,10 @@ h2{font-weight:600;font-size:18px;line-height:1.2;margin:0 0 6px;text-wrap:balan
 .note{font-size:13px;color:var(--muted);max-width:40em}
 .sec{margin-top:88px}
 .sec > .note{margin:0 0 26px}
+.sec.row{display:grid;grid-template-columns:280px minmax(0,1fr);column-gap:60px;align-items:start;border-top:1px solid var(--rule);padding-top:34px;margin-top:52px}
+.sec.row .fig{margin-top:0}.sec.row .note{margin:0 0 16px}.sec.row .rt .ctl{display:flex;flex-direction:column;gap:10px;align-items:flex-start;margin-top:4px}.sec.row .rt .cap{font-size:12px;color:var(--muted);margin:14px 0 0}.sec.row > p{margin:0;font-size:14px}
+.sec.row.full{display:block}.sec.row.full h2{margin-bottom:24px}
+.fig.pair{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));column-gap:28px}.fig.pair .kicker{margin-bottom:10px}
 .up{color:var(--up)} .down{color:var(--down)} .num{font-family:var(--mono);font-variant-numeric:tabular-nums;font-size:.94em}
 /* search */
 .sbox{position:relative}
@@ -72,6 +76,8 @@ h2{font-weight:600;font-size:18px;line-height:1.2;margin:0 0 6px;text-wrap:balan
 .chip:hover:not(.on){background:var(--wash)}
 .filters{display:flex;flex-wrap:wrap;gap:8px 18px;align-items:center;margin:0 0 26px}
 .filters .chip{padding:0 10px}
+.filters.one{flex-wrap:nowrap;gap:8px 12px;white-space:nowrap}.filters.one .chip{padding:0 7px}.filters.one .lab{letter-spacing:.06em;margin-right:0}.filters.one > span{display:inline-flex;align-items:center;gap:5px;flex:none}.filters.one .tabs{flex-wrap:nowrap}
+@media (max-width:1100px){.filters.one{flex-wrap:wrap}}
 .filters .lab{font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-right:2px}
 /* answer page */
 .answer{font-weight:500;font-size:clamp(28px,3.8vw,40px);line-height:1.18;letter-spacing:-.015em;margin:14px 0 0;max-width:22ch;text-wrap:balance}
@@ -94,6 +100,13 @@ h2{font-weight:600;font-size:18px;line-height:1.2;margin:0 0 6px;text-wrap:balan
 .evrow.call{border-bottom:1px solid var(--ink)}
 .evrow.sub{font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);font-weight:600;min-height:49px;box-sizing:border-box}
 .evrow.oth .s{font-weight:500;color:var(--muted)}
+.evrow.ct.more{display:block;color:var(--muted)}
+.evrow.ot{grid-template-columns:minmax(0,1fr) 84px 166px 118px 118px 116px 76px;gap:14px}
+.evrow.ot:not(.head) > :nth-child(n+4){white-space:nowrap}
+.sec .meter{margin:26px 0 44px}
+.evrow.ot .var{font-size:13px;color:var(--soft)}
+.evrow.ot .pl{display:none;font-style:normal}
+.evrow.ot .var em{display:block;font-style:normal;font-size:11px;color:var(--muted)}
 .shap{padding:6px 0 18px 186px;border-bottom:1px solid var(--rule)}
 .shead,.srow{display:grid;grid-template-columns:minmax(0,260px) 76px minmax(0,1fr);gap:14px;align-items:center}
 .shead{font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);font-weight:600;padding-bottom:6px}
@@ -151,6 +164,10 @@ th.sortable{cursor:pointer} th.sortable:hover{color:var(--ink)} th.sorted{color:
 td{padding:10px 12px 10px 0;border-bottom:1px solid var(--rule);vertical-align:middle}
 tbody tr{cursor:pointer} tbody tr:hover td{background:var(--wash)}
 td.gn{font-weight:600;white-space:nowrap}
+.lx{font:inherit;font-family:var(--mono);font-size:11px;font-weight:500;line-height:16px;height:18px;min-width:26px;padding:0 5px;margin-left:8px;border:1px solid var(--frame);border-radius:0;background:var(--bg);color:var(--soft);cursor:pointer;vertical-align:1px}
+td.lxc{width:1%;white-space:nowrap} td.lxc .lx{margin-left:0}
+.lx:hover,.lx[aria-expanded="true"]{border-color:var(--ink);color:var(--ink)}
+tr.sub td.gn{padding-left:30px;font-weight:500;box-shadow:inset 2px 0 0 var(--frame)} tr.sub td{background:var(--wash)}
 th:first-child,td:first-child{padding-left:12px} td.dir{white-space:nowrap;font-size:13px}
 .dotax{position:relative;width:130px;height:14px}
 .dotax:before{content:"";position:absolute;left:0;right:0;top:7px;height:1px;background:var(--rule)}
@@ -162,7 +179,7 @@ th:first-child,td:first-child{padding-left:12px} td.dir{white-space:nowrap;font-
 .ev i.no{border-color:var(--rule);background:transparent}
 .ev i.ch{outline:1.5px solid var(--ink);outline-offset:1px}
 .evh{display:flex;gap:4px}
-.evh span{width:15px;font-size:9px;letter-spacing:0;text-transform:none;color:var(--muted);writing-mode:vertical-rl;transform:rotate(180deg);height:46px;text-align:left;font-weight:500}
+.evh span{width:14px;line-height:14px;font-size:9px;letter-spacing:0;text-transform:none;color:var(--muted);writing-mode:vertical-rl;transform:rotate(180deg);height:46px;text-align:left;font-weight:500}
 .more{margin-top:22px}
 .btn{font:inherit;font-size:13px;border:1px solid var(--ink);background:var(--bg);color:var(--ink);padding:7px 16px;border-radius:0;cursor:pointer}
 .btn:hover{background:var(--wash)}
@@ -176,13 +193,28 @@ svg .row:hover .bgr{fill:var(--wash)}
 svg .row{cursor:pointer}
 #tip{position:fixed;z-index:50;pointer-events:none;background:var(--bg);border:1px solid var(--frame);box-shadow:0 4px 18px rgba(0,0,0,.08);padding:8px 11px;font-size:12.5px;line-height:1.45;max-width:280px;color:var(--soft)}
 #tip b{color:var(--ink)}
+/* graph page */
+.gwrap{display:grid;grid-template-columns:minmax(0,1fr) 300px;column-gap:32px;border-top:1px solid var(--ink);padding-top:14px}
+.gstage{position:relative} #gcv{width:100%;display:block;cursor:grab;touch-action:none} #gcv.pt{cursor:pointer}
+.gstat{font-size:12px;color:var(--muted);height:20px}
+.gzoom{position:absolute;right:0;top:0;display:flex;z-index:2} .gzoom button{font:inherit;font-size:14px;line-height:1;width:28px;height:28px;margin-left:-1px;border:1px solid var(--frame);border-radius:0;background:var(--bg);color:var(--ink);cursor:pointer} .gzoom button:hover{background:var(--wash)}
+.gkey{display:flex;flex-wrap:wrap;gap:4px 18px;font-size:12px;color:var(--muted);margin-top:10px} .gkey i{display:inline-block;width:18px;height:3px;vertical-align:middle;margin-right:6px} .gkey b{display:inline-block;width:9px;height:9px;margin-right:6px;vertical-align:-1px}
+.gside{font-size:13px;max-height:740px;overflow:auto} .gside h2{font-size:16px} .gsub{color:var(--muted);font-size:12px;margin:0 0 10px} .gbtn{font-size:12px;padding:4px 10px;margin:0 6px 12px 0}
+.grow{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px;align-items:center;padding:6px 2px;border:0;border-bottom:1px solid var(--rule);border-radius:0;width:100%;text-align:left;font:inherit;font-size:13px;color:inherit;background:none;cursor:pointer}
+.grow:hover{background:var(--wash)} .grow em{font-style:normal;color:var(--muted);font-size:11.5px;display:block}
+.gfp{display:inline-grid;grid-auto-flow:column;gap:2px} .gfp i{width:8px;height:14px;border:1px solid var(--rule);display:block}
+.chip.gchip{margin:0 6px 6px 0;display:inline-flex;align-items:center} .gchip i{width:9px;height:9px;display:inline-block;margin-right:6px} .chip.gchip.on{background:var(--bg);color:var(--ink);border-color:var(--frame)} .chip.gchip:not(.on){color:var(--muted);border-color:var(--rule)} .gchip:not(.on) i{opacity:.25}
+.gpick{position:relative;display:inline-block} .gpick input{font:inherit;font-size:12.5px;height:30px;width:210px;border:1px solid var(--frame);background:var(--bg);color:var(--ink);padding:0 9px;border-radius:0}
+.gres{position:absolute;top:30px;left:0;z-index:6;background:var(--bg);border:1px solid var(--frame);width:340px;max-width:86vw;max-height:260px;overflow:auto} .gres div{padding:5px 9px;cursor:pointer;font-size:12.5px} .gres div:hover{background:var(--wash)} .gres em{font-style:normal;color:var(--muted);font-size:11.5px}
+.gpin{font:inherit;font-size:12px;border:1px solid var(--frame);border-radius:0;padding:3px 7px;cursor:pointer;background:var(--bg);color:var(--ink)} button.gpin:hover{background:var(--wash)}
 .loading{font-size:16px;color:var(--muted)}
 .foot{max-width:1040px;margin:0 auto;padding-block:28px 60px;border-top:1px solid var(--rule);font-size:12px;color:var(--muted)}
 .foot p{max-width:62em;margin:0 0 6px}
 @media (max-width:760px){
   main{padding-block:44px 80px}.sec{margin-top:64px}
+  .sec.row{grid-template-columns:minmax(0,1fr);row-gap:18px}.fig.pair{grid-template-columns:minmax(0,1fr);row-gap:36px}.gwrap{grid-template-columns:minmax(0,1fr);row-gap:28px}.gside{max-height:none}.filters.one{flex-wrap:wrap;white-space:normal}.filters.one > span{flex:0 1 auto}.filters.one .tabs{flex-wrap:wrap}
   .howto{grid-template-columns:repeat(2,minmax(0,1fr))}.facts{grid-template-columns:minmax(0,1fr)}
-  .evrow{grid-template-columns:120px 90px minmax(0,1fr)}.evrow > :nth-child(4){display:none}
+  .evrow{grid-template-columns:120px 90px minmax(0,1fr)}.evrow > :nth-child(4){display:none}.evrow.ot{grid-template-columns:120px 90px minmax(0,1fr);column-gap:16px;row-gap:2px}.evrow.ot .pl{display:inline}.evrow.ot > :nth-child(1){grid-area:1/1}.evrow.ot > :nth-child(2){grid-area:1/2}.evrow.ot > :nth-child(6){grid-area:1/3}.evrow.ot > :nth-child(3){grid-area:2/1/4/3;align-self:start}.evrow.ot > :nth-child(4){display:block;grid-area:2/3}.evrow.ot > :nth-child(5){grid-area:3/3}.evrow.ot > :nth-child(7){grid-area:4/3}.evrow.ot .al{font-size:13px}.evrow.ot > :nth-child(4)::before{content:"Alt allele there "}.evrow.ot > :nth-child(5)::before{content:"Alt allele here "}.evrow.ot > :nth-child(7):not(:empty)::before{content:"Burden P "}.evrow.ot .al::before{color:var(--muted)}.evrow.ot.head > :nth-child(n+3):not(:nth-child(6)){display:none}.evrow.ot.head > ::before{content:none!important}
   .cand{grid-template-columns:120px minmax(0,1fr) 46px 1fr}
   .shap{padding-left:0}.shead,.srow{grid-template-columns:minmax(0,1fr) 56px minmax(0,110px)}.shead{display:none}.cand > :nth-child(4),.cand > :nth-child(5){display:none}
   .top .sbox{width:52vw}
@@ -194,7 +226,7 @@ svg .row{cursor:pointer}
 <body>
 <header class="top">
   <a class="wordmark" href="#home" aria-label="SIGNPOST home"><svg class="logo" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v18M8 21h8" style="stroke:var(--ink)"/><path d="M5 6h11l3 2.5-3 2.5H5z" style="stroke:var(--up)"/><path d="M19 13H8l-3 2.5L8 18h11z" style="stroke:var(--down)"/></svg>SIGNPOST</a>
-  <nav class="tnav"><a href="#about">About</a></nav>
+  <nav class="tnav"><a href="#graph">Graph</a><a href="#about">About</a></nav>
   <div class="sbox" id="topsearch"><input id="q2" type="search" placeholder="Search a gene or trait" autocomplete="off" aria-label="Search a gene or trait"></div>
 </header>
 <main id="app"><p class="loading">Loading the gene-trait calls…</p></main>
@@ -209,10 +241,10 @@ const $=s=>document.querySelector(s), app=$("#app");
 const esc=s=>String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 const pct=(v,d=1)=>v==null?"–":(v*100).toFixed(d).replace(/\.0$/,"")+"%";
 const fw=v=>v==null?"–":v<.05?"<5%":pct(v);   // chance wrong: below 5% is shown as <5% (the replication error rate of a burden sign; finer values are not meaningful)
-const sci=v=>{if(v==null) return "–"; if(v>=1e-3) return v.toPrecision(2); const e=Math.floor(Math.log10(v)), m=v/10**e, SUP={"-":"⁻",0:"⁰",1:"¹",2:"²",3:"³",4:"⁴",5:"⁵",6:"⁶",7:"⁷",8:"⁸",9:"⁹"}; return `${m.toFixed(1).replace(/\.0$/,"")}×10${String(e).split("").map(c=>SUP[c]).join("")}`};
+const sci=v=>{if(v==null) return "–"; if(v===0) return "< 10⁻³⁰⁰"; if(v>=1e-3) return v.toPrecision(2); const e=Math.floor(Math.log10(v)), m=v/10**e, SUP={"-":"⁻",0:"⁰",1:"¹",2:"²",3:"³",4:"⁴",5:"⁵",6:"⁶",7:"⁷",8:"⁸",9:"⁹"}; return `${m.toFixed(1).replace(/\.0$/,"")}×10${String(e).split("").map(c=>SUP[c]).join("")}`};
 const obs=pw=>{for(const [t,o] of OBS) if(pw<=t) return o; return "about 45%"};
-const P=a=>({t:a[0],g:a[1],s:a[2],pw:a[3],src:a[4],pc:a[5],loc:a[6],cls:a[7],lof:a[8],ev:a[9].map(v=>v==null?[null,null]:[Math.sign(v),Math.abs(v)/1000]),bu:a[10]==null?null:[Math.sign(a[10]),Math.abs(a[10])/1000],tr:a[11]==null?null:[Math.sign(a[11]),Math.abs(a[11])/1000],sh:null});
-const BUILD="2026-11-10c";   // cache-busting for the data files: trait indices change between builds, so a stale shard would not match core.json
+const P=a=>({t:a[0],g:a[1],s:a[2],pw:a[3],src:a[4],pc:a[5],loc:a[6],cls:a[7],sig:a[8],ev:a[9].map(v=>v==null?[null,null]:[Math.sign(v),Math.abs(v)/1000]),bu:a[10]==null?null:[Math.sign(a[10]),Math.abs(a[10])/1000],tr:a[11]==null?null:[Math.sign(a[11]),Math.abs(a[11])/1000],sh:null});
+const BUILD="2026-11-10y";   // cache-busting for the data files: trait indices change between builds, so a stale shard would not match core.json
 const DET={}; const loadDetail=t=>DET[t%D.nshard]||(DET[t%D.nshard]=(async()=>{const f=q=>fetch(`d/${String(t%D.nshard).padStart(2,"0")}.json?v=${BUILD}${q}`,{cache:q?"no-store":"default"}).then(r=>r.ok?r.json():null).catch(()=>null);
   let S=await f(""); if(S&&D.build&&S.build!==D.build) S=await f("&r="+Date.now());   // shard from another build than core.json (stale cache): refetch bypassing the cache
   if(S&&D.build&&S.build!==D.build&&!sessionStorage.getItem("sp-reloaded")){sessionStorage.setItem("sp-reloaded","1"); location.reload(); return null}   // still mismatched: the page itself is stale, reload once
@@ -228,10 +260,10 @@ function cross(t,g){return ((D.matches||{})[t]||[]).map(j=>pairKey.get(j+"|"+g))
 function crossCell(p){const X=cross(p.t,p.g); if(!X.length) return `<span style="color:var(--faint)">–</span>`;
   const k=X.filter(x=>x.s===p.s).length, tip=X.map(x=>`${esc(D.traits[x.t].cohort)} · ${esc(D.traits[x.t].name)} · ${x.s>0?"▲":"▼"} ${fw(x.pw)}`).join("<br>");
   return `<span class="xc num ${k===X.length?"all":k===0?"none":""}" data-tip="<b>Same gene, matching traits in other cohorts</b><br>${esc(tip)}">${k===X.length?"✓":k===0?"✗":"~"} ${k}/${X.length}</span>`}
-const SRCV={"Fine-mapped eQTL":"--c-eq","TWAS":"--c-tw","SMR + HEIDI":"--c-smr","Borzoi":"--c-bz","pQTL":"--c-pq","Coding variant":"--c-cd","Recalibrated minimum":"--c-min","SIGNPOST + other traits":"--ink"};
+const SRCV={"Fine-mapped eQTL":"--c-eq","TWAS":"--c-tw","SMR + HEIDI":"--c-smr","Borzoi":"--c-bz","pQTL":"--c-pq","Coding variant":"--c-cd","Recalibrated minimum":"--c-min"};
 let ABOUT=null; const loadAbout=()=>ABOUT||(ABOUT=fetch("about.json?v="+BUILD).then(r=>r.ok?r.json():null).catch(()=>null));
 const pc0=v=>Math.round(v*100)+"%";
-function lineChart(host,cfg){const W=1040,H=cfg.h||400,ml=56,mr=190,mt=14,mb=50,pw=W-ml-mr,ph=H-mt-mb;
+function lineChart(host,cfg){const sx=cfg.strip?cfg.strip.h+34+(cfg.strip.top?18:0):0,W=cfg.W||1040,H=(cfg.h||400)+sx,ml=56,mr=cfg.mr??190,mt=14,mb=50+sx,pw=W-ml-mr,ph=H-mt-mb;
   const X=v=>ml+(v-cfg.xd[0])/(cfg.xd[1]-cfg.xd[0])*pw, Y=v=>mt+(1-(v-cfg.yd[0])/(cfg.yd[1]-cfg.yd[0]))*ph;
   let s=`<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="${esc(cfg.label)}">`;
   cfg.yt.forEach(v=>s+=`<line x1="${ml}" x2="${ml+pw}" y1="${Y(v)}" y2="${Y(v)}" style="stroke:var(--rule)"/><text x="${ml-8}" y="${Y(v)+4}" class="tiny" text-anchor="end">${cfg.fy(v)}</text>`);
@@ -240,12 +272,16 @@ function lineChart(host,cfg){const W=1040,H=cfg.h||400,ml=56,mr=190,mt=14,mb=50,
   (cfg.refs||[]).forEach(r=>{if(r.lo!=null&&r.hi!=null) s+=`<rect x="${ml}" y="${Y(r.hi)}" width="${pw}" height="${Math.max(0,Y(r.lo)-Y(r.hi))}" style="fill:var(${r.c||"--frame"});fill-opacity:.07"/>`;
     s+=`<line x1="${ml}" x2="${ml+pw}" y1="${Y(r.y)}" y2="${Y(r.y)}" style="stroke:var(${r.c||"--frame"});stroke-dasharray:3 3"/>`+(r.right?"":`<text x="${r.left?ml+4:ml+pw-4}" y="${Y(r.y)-6}" class="tiny" text-anchor="${r.left?"start":"end"}" style="${r.c?`fill:var(${r.c})`:""}">${r.label}</text>`)});
   s+=`<text x="${ml+pw/2}" y="${H-6}" class="tiny" text-anchor="middle">${esc(cfg.xl)}</text><text transform="translate(12 ${mt+ph/2}) rotate(-90)" class="tiny" text-anchor="middle">${esc(cfg.yl)}</text>`;
+  if(cfg.strip){const st=cfg.strip,y1=mt+ph+30+(st.top?18:0)+st.h,mx=Math.max(...st.bins.map(b=>b.v));   // bars under the x axis, sharing it
+    st.bins.forEach(b=>{const h=Math.max(1,b.v/mx*(st.h-14)); s+=`<rect x="${X(b.lo)+1.5}" y="${y1-h}" width="${X(b.hi)-X(b.lo)-3}" height="${h}" rx="2" style="fill:var(--muted);fill-opacity:.35" data-tip="${b.tip}"/><text x="${(X(b.lo)+X(b.hi))/2}" y="${y1-h-4}" class="tiny num" text-anchor="middle">${b.label}</text>`});
+    s+=`<line x1="${ml}" x2="${ml+pw}" y1="${y1}" y2="${y1}" style="stroke:var(--rule)"/>`+(st.top?`<text x="${ml}" y="${mt+ph+40}" class="tiny">${esc(st.name)}</text>`:`<text x="${ml+pw+10}" y="${y1-4}" style="fill:var(--muted);font-size:12px">${esc(st.name)}</text>`)}
   const S=cfg.series, xs=se=>se.x;
   S.forEach(se=>{if(se.lo){let a=se.x.map((x,i)=>`${X(x)},${Y(se.hi[i])}`).join(" ")+" "+se.x.map((x,i)=>`${X(x)},${Y(se.lo[i])}`).reverse().join(" "); s+=`<polygon points="${a}" style="fill:var(${se.c});fill-opacity:.09;stroke:none"/>`}});
   if(cfg.diag) s+=`<line x1="${X(cfg.xd[0])}" y1="${Y(cfg.yd[0])}" x2="${X(Math.min(cfg.xd[1],cfg.yd[1]))}" y2="${Y(Math.min(cfg.xd[1],cfg.yd[1]))}" style="stroke:var(--frame);stroke-dasharray:3 3"/><text x="${X(cfg.xd[0]+.62*(cfg.xd[1]-cfg.xd[0]))+8}" y="${Y(cfg.xd[0]+.62*(cfg.xd[1]-cfg.xd[0]))+16}" class="tiny" text-anchor="start">${esc(cfg.diag)}</text>`;
-  S.forEach(se=>{s+=`<polyline points="${se.x.map((x,i)=>`${X(x)},${Y(se.y[i])}`).join(" ")}" style="fill:none;stroke:var(${se.c});stroke-width:${se.w||2};stroke-linejoin:round${se.dash?";stroke-dasharray:4 4":""}"/>`; if(se.pts) se.x.forEach((x,i)=>s+=`<circle cx="${X(x)}" cy="${Y(se.y[i])}" r="${se.w>2?4.5:3.5}" style="fill:var(${se.c});stroke:var(--bg);stroke-width:1.5"/>`)});
-  const ends=S.map(se=>({y:Y(se.y[se.y.length-1]),se})).concat((cfg.refs||[]).filter(r=>r.right).map(r=>({y:Y(r.y),ref:r}))).sort((a,b)=>a.y-b.y); for(let i=1;i<ends.length;i++) if(ends[i].y-ends[i-1].y<15) ends[i].y=ends[i-1].y+15;
-  ends.forEach(e=>s+=e.ref?`<text x="${ml+pw+10}" y="${e.y+4}" style="fill:var(${e.ref.c||"--muted"});font-size:12px;font-weight:500">${esc(e.ref.label)}</text>`:`<text x="${X(e.se.x[e.se.x.length-1])+10}" y="${e.y+4}" style="fill:var(${e.se.c});font-size:12px;font-weight:${e.se.w>2?600:500}">${esc(e.se.name)}${e.se.endNote?` <tspan style="fill:var(--muted);font-weight:400">${esc(e.se.endNote)}</tspan>`:""}</text>`);
+  S.forEach(se=>{if(se.whisk) se.x.forEach((x,i)=>s+=`<line x1="${X(x)}" x2="${X(x)}" y1="${Y(se.cl[i])}" y2="${Y(se.ch[i])}" style="stroke:var(${se.c});stroke-width:1.5"/>`); s+=`<polyline points="${se.x.map((x,i)=>`${X(x)},${Y(se.y[i])}`).join(" ")}" style="fill:none;stroke:var(${se.c});stroke-width:${se.w||2};stroke-linejoin:round${se.dash?";stroke-dasharray:4 4":""}"/>`; if(se.pts) se.x.forEach((x,i)=>s+=`<circle cx="${X(x)}" cy="${Y(se.y[i])}" r="${se.w>2?4.5:3.5}" style="fill:var(${se.c});stroke:var(--bg);stroke-width:1.5"/>`)});
+  const ends=S.filter(se=>!se.lab).map(se=>({y:Y(se.y[se.y.length-1]),se})).concat((cfg.refs||[]).filter(r=>r.right).map(r=>({y:Y(r.y),ref:r}))).sort((a,b)=>a.y-b.y); for(let i=1;i<ends.length;i++) if(ends[i].y-ends[i-1].y<15) ends[i].y=ends[i-1].y+15;
+  ends.forEach(e=>s+=e.ref?`<text x="${ml+pw+10}" y="${e.y+4}" style="fill:var(${e.ref.note?"--muted":e.ref.c||"--muted"});font-size:12px;font-weight:${e.ref.note?400:500}">${esc(e.ref.label)}</text>`:`<text x="${cfg.endRight?ml+pw+10:X(e.se.x[e.se.x.length-1])+10}" y="${e.y+4}" style="fill:var(${e.se.c});font-size:12px;font-weight:${e.se.w>2?600:500}">${esc(e.se.name)}${e.se.endNote?` <tspan style="fill:var(--muted);font-weight:400">${esc(e.se.endNote)}</tspan>`:""}</text>`);
+  S.filter(se=>se.lab).forEach(se=>s+=`<text x="${X(se.lab[0])}" y="${Y(se.lab[1])}" text-anchor="${se.lab[2]||"start"}" style="fill:var(${se.c});font-size:12px;font-weight:500">${esc(se.name)}</text>`);   // label placed by hand (data coordinates)
   s+=`<line class="xh" x1="0" x2="0" y1="${mt}" y2="${mt+ph}" style="stroke:var(--ink);stroke-width:1;visibility:hidden"/><g class="xd"></g><rect class="ov" data-tip=" " x="${ml}" y="${mt}" width="${pw}" height="${ph}" style="fill:transparent"/></svg>`;
   host.innerHTML=s; const svg=host.querySelector("svg"),ov=host.querySelector(".ov"),xh=host.querySelector(".xh"),xd=host.querySelector(".xd");
   const near=(arr,v)=>{let lo=0,hi=arr.length-1; while(hi-lo>1){const m=(lo+hi)>>1; if(arr[m]<v) lo=m; else hi=m} return Math.abs(arr[lo]-v)<=Math.abs(arr[hi]-v)?lo:hi};
@@ -257,39 +293,48 @@ function lineChart(host,cfg){const W=1040,H=cfg.h||400,ml=56,mr=190,mt=14,mb=50,
 function aboutPage(){
   app.innerHTML=`<div class="ab"><div class="kicker"><a href="#home">SIGNPOST</a> · About</div><h1>About SIGNPOST</h1>
   <p class="dek" style="max-width:40em">SIGNPOST predicts whether more of a gene raises or lowers a human trait, for genes at genome-wide significant loci, and says how likely each call is to be wrong.</p>
-  <section class="sec" style="margin-top:56px"><h2>How to read a call</h2><dl>
+  <section class="sec row" style="margin-top:56px"><div class="rt"><h2>How to read a call</h2></div><dl>
     <dt>Direction</dt><dd>The effect of more of the gene (higher expression or protein) on the trait. Loss-of-function carriers are expected to show the opposite.</dd>
     <dt>P(wrong)</dt><dd>The chance the direction is wrong, calibrated against gene-burden tests. Values below 5% are shown as &lt;5%.</dd>
     <dt>P(causal)</dt><dd>The chance the gene is the one acting at its locus, shared among nearby protein-coding genes, from distance, enhancer–gene links, credible-set position and gene annotations, learned at loci where a coding variant names the gene.</dd>
-    <dt>Other traits</dt><dd>When a gene's direction is known for one trait, from a gene-burden test or a fine-mapped coding variant, a fine-mapped variant shared with another trait carries that direction over.</dd>
+    <dt>Other traits</dt><dd>When a gene's direction is known for one trait, from a gene-burden test or a fine-mapped coding variant, a fine-mapped variant shared with a genetically correlated trait carries that direction over.</dd>
     <dt>Loci</dt><dd>Only credible sets whose lead variant has p &lt; 5×10⁻⁸ and minor allele frequency ≥ 1%.</dd>
     <dt>Cohorts</dt><dd>${(n=>`Pan-UKB (${n("Pan-UKB")} traits), FinnGen R12 (${n("FinnGen")} endpoints) and a batch of ${n("Open Targets")} Open Targets studies`)(c=>D.traits.filter(T=>T.cohort===c).length)}, each with at least one call at 30% chance wrong or better. All of Us is used only to check accuracy.</dd>
   </dl></section>
-  <section class="sec"><h2>Accuracy for gene-trait sign prediction across three cohorts</h2>
-    <p class="note">How well each source's P(wrong) separates right from wrong signs against gene-burden tests, with the locus held out.</p>
+  <section class="sec row full"><h2>Accuracy for gene-trait sign prediction across three cohorts</h2>
     <div class="fig"><div class="aucg" id="aucg"></div><div class="legend"><span><svg width="12" height="12" style="vertical-align:middle;margin-right:6px"><circle cx="6" cy="6" r="5" style="fill:var(--c-min)"/></svg>P(wrong) model, 95% bootstrap interval</span><span><svg width="12" height="12" style="vertical-align:middle;margin-right:6px"><path d="M2 2L10 10M10 2L2 10" style="stroke:var(--muted);stroke-width:1.6"/></svg>Raw strength of the source</span></div></div></section>
-  <section class="sec"><h2>False sign rate against P(wrong)</h2>
-    <p class="note">False sign rate among burden-labelled pairs, ranked by each source's raw strength or its P(wrong), with the locus held out. SIGNPOST + other traits adds the direction carried over from other traits, leaving out the pair's own burden test.</p>
-    <div class="fig"><div class="ctl"><span class="tabs" id="fsrt"><button class="chip" data-v="Raw method">Raw strength</button><button class="chip on" data-v="SIGNPOST">SIGNPOST P(wrong)</button></span><span class="tabs" id="fsrl"><button class="chip on" data-v="all">All loci</button><button class="chip" data-v="common regulatory">Common regulatory loci</button></span></div><div id="fsrc"></div></div></section>
-  <section class="sec"><h2>Causal gene ranking at burden-gene loci</h2>
+  <section class="sec row"><div class="rt"><h2>False sign rate against P(wrong)</h2>
+    <p class="note">False sign rate among burden-labelled pairs, ranked by each source's raw strength or its P(wrong), with the locus held out.</p>
+    <div class="ctl"><span class="tabs" id="fsrt"><button class="chip" data-v="Raw method">Raw strength</button><button class="chip on" data-v="SIGNPOST">SIGNPOST P(wrong)</button></span><span class="tabs" id="fsrl"><button class="chip on" data-v="all">All loci</button><button class="chip" data-v="common regulatory">Common regulatory loci</button></span></div></div>
+    <div class="fig"><div id="fsrc"></div></div></section>
+  <section class="sec row"><div class="rt"><h2>Calibration of P(wrong)</h2>
+    <p class="note">Predicted chance wrong against the share actually wrong among burden-labelled pairs, with the locus held out.</p>
+    <h2 style="margin-top:26px">Direction carried over from other traits</h2>
+    <p class="note">False sign rate of the direction carried over from another trait, among burden-labelled pairs, by the genetic correlation between the two traits.</p></div>
+    <div class="fig pair"><div><div class="kicker">Calibration</div><div id="calc"></div></div><div><div class="kicker">Carried over from other traits</div><div id="trc"></div></div></div></section>
+  <section class="sec row"><div class="rt"><h2>Causal gene ranking at burden-gene loci</h2>
     <p class="note">Loci holding a gene with a significant gene-burden result: how often P(causal) ranks that gene near the top.</p>
-    <div class="fig"><div class="ctl"><span class="tabs" id="cvt"><button class="chip on" data-v="rank">Rank</button><button class="chip" data-v="cal">Calibration</button></span><span class="tabs" id="cct"><button class="chip on" data-v="Pan-UKB">Pan-UKB</button><button class="chip" data-v="FinnGen">FinnGen</button></span></div><div id="causc"></div><p class="cap" id="causcap"></p></div></section>
-  <section class="sec"><h2>Drug target consistency with predicted sign</h2>
-    <p class="note">A target is consistent when the drug's action, applied to the predicted direction, moves the trait the way the indication wants. Balanced accuracy averages the consistent share over activator and inhibitor drugs, so the fact that most drugs are inhibitors does not count as accuracy. Targets ranked by P(causal) × P(right).</p>
-    <div class="fig"><div id="drugc"></div><p class="cap" id="drugcap">Dashed lines: balanced accuracy when the predicted sign is replaced by the gene-burden sign.</p></div></section>
-  <section class="sec"><h2>Download</h2><p class="note">One row per gene and trait: direction of more gene, chance wrong, the source that made the call, P(causal), lead variant, each source's strength and chance wrong, the gene-burden test, and the direction carried over from other traits.</p><dl style="grid-template-columns:max-content minmax(0,1fr)">
+    <div class="ctl"><span class="tabs" id="cvt"><button class="chip on" data-v="rank">Rank</button><button class="chip" data-v="cal">Calibration</button></span><span class="tabs" id="cct"><button class="chip on" data-v="Pan-UKB">Pan-UKB</button><button class="chip" data-v="FinnGen">FinnGen</button></span></div><p class="cap" id="causcap"></p></div>
+    <div class="fig"><div id="causc"></div></div></section>
+  <section class="sec row"><div class="rt"><h2>Drug target consistency with predicted sign</h2>
+    <p class="note">Balanced accuracy of the predicted direction against each drug's action on its indication, averaged over activators and inhibitors, with targets ranked by P(causal) × P(right).</p>
+    <p class="cap" id="drugcap">Dashed lines: the same, using the gene-burden direction.</p></div>
+    <div class="fig"><div id="drugc"></div></div></section>
+  <section class="sec row"><div class="rt"><h2>Download</h2><p class="note">One row per gene and trait: direction of more gene, chance wrong, the source that made the call, P(causal), lead variant, each source's strength and chance wrong, the gene-burden test, and the direction carried over from other traits.</p></div>
+    <dl style="grid-template-columns:max-content minmax(0,1fr)">
     <dt><a href="signpost_calls.csv" download>signpost_calls.csv</a></dt><dd>The ${D.pairs.length.toLocaleString()} calls on this site, at 30% chance wrong or better (CSV, 10 MB).</dd>
     <dt><a href="signpost_all_pairs.csv.gz" download>signpost_all_pairs.csv.gz</a></dt><dd>Every scored gene–trait pair at qualifying loci, including calls close to a coin flip (gzipped CSV, 14 MB).</dd>
   </dl></section>
-  <section class="sec"><h2>Data</h2><p>GWAS summary statistics from Pan-UKB, FinnGen R12 and the GWAS Catalog through Open Targets; eQTL, pQTL and colocalisation resources as described in the methods; drug mechanisms and clinical stages from Open Targets (ChEMBL); protein function summaries from UniProt (CC BY 4.0). Prototype for research use only; not for clinical decisions.</p></section></div>`;
+  <section class="sec row"><div class="rt"><h2>Data</h2></div><p>GWAS summary statistics from Pan-UKB, FinnGen R12 and the GWAS Catalog through Open Targets; eQTL, pQTL and colocalisation resources as described in the methods; drug mechanisms and clinical stages from Open Targets (ChEMBL); protein function summaries from UniProt (CC BY 4.0). Prototype for research use only; not for clinical decisions.</p></section></div>`;
   loadAbout().then(A=>{if(!A){app.insertAdjacentHTML("beforeend",`<p class="note">The figure data did not load.</p>`);return}
     // 1. AUC
     const coh=[...new Set(A.auc.map(r=>r.cohort))];
-    $("#aucg").innerHTML=coh.map(c=>{const R=A.auc.filter(r=>r.cohort===c),W=340,lw=118,x0=lw+8,pw=170,rh=26,H=R.length*rh+40,X=v=>x0+(v-.3)/.7*pw;
-      let s=`<div><h4>${esc(c)} <span>· ${R[0].pairs.toLocaleString()} pairs</span></h4><svg viewBox="0 0 ${W} ${H}" role="img" aria-label="AUC by source, ${esc(c)}">`;
+    const wideA=matchMedia("(min-width:761px)").matches; if(wideA) $("#aucg").style.cssText="grid-template-columns:410fr 292fr 292fr;gap:24px";
+    $("#aucg").innerHTML=coh.map((c,ci)=>{const R=A.auc.filter(r=>r.cohort===c),lw=wideA&&ci?0:118,x0=lw+8,pw=wideA?240:170,W=x0+pw+44,rh=26,H=R.length*rh+40,X=v=>x0+(v-.3)/.7*pw;
+      let s=`<div><h4 style="padding-left:${lw?0:8/W*100}%">${esc(c)} <span>· ${R[0].pairs.toLocaleString()} pairs</span></h4><svg viewBox="0 0 ${W} ${H}" role="img" aria-label="AUC by source, ${esc(c)}">`;
       [.3,.5,.7,.9].forEach(v=>s+=`<line x1="${X(v)}" x2="${X(v)}" y1="4" y2="${R.length*rh+4}" style="stroke:var(${v===.5?"--frame":"--rule"});${v===.5?"stroke-dasharray:3 3":""}"/><text x="${X(v)}" y="${R.length*rh+20}" class="tiny" text-anchor="middle">${v.toFixed(1)}</text>`);
       R.forEach((r,i)=>{const y=i*rh+16,cv=SRCV[r.source]||"--ink",big=r.source==="Recalibrated minimum";
-        s+=`<text x="${lw}" y="${y+4}" class="tl" text-anchor="end" style="font-size:12px;${big?"font-weight:600;fill:var(--ink)":""}">${esc(r.source==="Recalibrated minimum"?"SIGNPOST":r.source)}</text>`;
+        if(lw) s+=`<text x="${lw}" y="${y+4}" class="tl" text-anchor="end" style="font-size:12px;${big?"font-weight:600;fill:var(--ink)":""}">${esc(r.source==="Recalibrated minimum"?"SIGNPOST":r.source)}</text>`;
         if(r.auc==null){s+=`<text x="${x0}" y="${y+4}" class="tiny">too few pairs to estimate</text>`;return}   // no counts below 20 (All of Us dissemination policy)
         s+=`<line x1="${X(r.lo)}" x2="${X(r.hi)}" y1="${y}" y2="${y}" style="stroke:var(${cv});stroke-width:2;opacity:.45"/>`;
         if(r.raw!=null) s+=`<path d="M${X(r.raw)-4} ${y-4}L${X(r.raw)+4} ${y+4}M${X(r.raw)+4} ${y-4}L${X(r.raw)-4} ${y+4}" style="stroke:var(--muted);stroke-width:1.5"/>`;
@@ -298,22 +343,34 @@ function aboutPage(){
       return s+`<text x="${x0+pw/2}" y="${H-2}" class="tiny" text-anchor="middle">AUC for a wrong sign</text></svg></div>`}).join("");
     // 2. FSR
     let fp="SIGNPOST",fl="all"; const drawF=()=>{const C=A.fsr.filter(c=>c.panel===fp&&(c.loci||"common regulatory")===fl),N=C[0].N,panel=fp;
-      lineChart($("#fsrc"),{label:"False sign rate against pairs selected",h:400,xd:[0,1],yd:[0,.6],xt:[0,.25,.5,.75,1],yt:[0,.1,.2,.3,.4,.5,.6],fx:pc0,fy:pc0,refs:[{y:.2,label:"20% false sign rate"}],
+      lineChart($("#fsrc"),{label:"False sign rate against pairs selected",W:700,mr:118,h:380,xd:[0,1],yd:[0,.6],xt:[0,.25,.5,.75,1],yt:[0,.1,.2,.3,.4,.5,.6],fx:pc0,fy:pc0,refs:[{y:.2,label:"20% false sign rate"}],
         xl:`% of the ${N} pairs selected, by ${panel==="SIGNPOST"?"the model's P(wrong)":"the source's raw strength"}`,yl:"False sign rate",
-        series:C.map(c=>({name:c.model==="Recalibrated minimum"?"SIGNPOST":c.model,c:SRCV[c.model]||"--ink",w:c.model==="Recalibrated minimum"||c.model==="SIGNPOST + other traits"?3:2,x:c.n.map(v=>v/N),y:c.f,n:c.n})),
+        series:C.map(c=>({name:c.model==="Recalibrated minimum"?"SIGNPOST":c.model,c:SRCV[c.model]||"--ink",w:c.model==="Recalibrated minimum"?3:2,x:c.n.map(v=>v/N),y:c.f,n:c.n})),
         head:xv=>`${pc0(xv)} of pairs selected (${Math.round(xv*N)})`,row:(se,i)=>`<span style="color:var(${se.c})">●</span> ${esc(se.name)}: ${pct(se.y[i])} wrong`})};
     drawF();
     $("#fsrt").addEventListener("click",e=>{const b=e.target.closest("button"); if(!b) return; $("#fsrt").querySelectorAll(".chip").forEach(x=>x.classList.toggle("on",x===b)); fp=b.dataset.v; drawF()});
     $("#fsrl").addEventListener("click",e=>{const b=e.target.closest("button"); if(!b) return; $("#fsrl").querySelectorAll(".chip").forEach(x=>x.classList.toggle("on",x===b)); fl=b.dataset.v; drawF()});
+    // 2a. calibration of P(wrong): SIGNPOST's call and the direction carried over from other traits
+    if(A.calib){const mk=(k,name,c,w,dash,band)=>{const R=A.calib[k]; return {name,c,w,dash,pts:true,x:R.map(r=>r.pred),y:R.map(r=>r.obs),n:R.map(r=>r.n),cl:R.map(r=>r.lo),ch:R.map(r=>r.hi),...(band?{lo:R.map(r=>r.lo),hi:R.map(r=>r.hi)}:{})}};
+      lineChart($("#calc"),{label:"Predicted against observed chance wrong, SIGNPOST calls",W:340,mr:10,h:330,xd:[0,.5],yd:[0,.5],xt:[0,.1,.2,.3,.4,.5],yt:[0,.1,.2,.3,.4,.5],fx:pc0,fy:pc0,diag:"perfect calibration",xl:"Predicted P(wrong)",yl:"Share wrong against the gene-burden test",
+        series:[{...mk("signpost","SIGNPOST","--c-min",3,false,true),lab:[.42,.48,"end"]}],head:xv=>`Predicted ${pc0(xv)}`,
+        row:(se,i)=>`<span style="color:var(${se.c})">●</span> ${esc(se.name)}: predicted ${pct(se.x[i])}, observed ${pct(se.y[i])} (${pct(se.cl[i])}–${pct(se.ch[i])}) · ${se.n[i].toLocaleString()} pairs`})}
+    // 2b. direction carried over from other traits, against trait correlation
+    if(A.transfer){const B=A.transfer.bins,mid=B.map((b,i)=>i+.5),bl=i=>`|rg| ${B[i].lo}–${B[i].hi}`,bi=xv=>Math.min(B.length-1,Math.max(0,Math.floor(xv)));
+      lineChart($("#trc"),{label:"False sign rate of the direction carried over from other traits, by trait correlation",W:340,mr:10,h:248,xd:[0,B.length],yd:[0,.6],xt:mid,yt:[0,.1,.2,.3,.4,.5,.6],fx:v=>`${B[bi(v)].lo}–${B[bi(v)].hi}`,fy:pc0,refs:[{y:.5,label:"chance"}],
+        xl:"Largest |rg| with a trait the direction came from",yl:"False sign rate",
+        strip:{h:64,top:true,name:"Share of the site's calls",bins:B.map((b,i)=>({lo:i,hi:i+1,v:b.site_share,label:pc0(b.site_share),tip:`<b>${bl(i)}</b><br>${b.site_n.toLocaleString()} calls on the site (${pc0(b.site_share)})`}))},
+        series:[{name:"Trait correlation alone",lab:[1.8,.335],c:"--faint",w:1.5,dash:true,pts:true,x:mid,y:B.map(b=>b.rg_wrong),n:B.map(b=>b.n)},{name:"Shared variant",lab:[.12,.235],c:"--ink",w:3,pts:true,x:mid,y:B.map(b=>b.wrong),lo:B.map(b=>b.ci_lo),hi:B.map(b=>b.ci_hi),n:B.map(b=>b.n)}],
+        head:xv=>bl(bi(xv)),row:(se,i)=>`<span style="color:var(${se.c})">●</span> ${esc(se.name)}: ${pct(se.y[i])} wrong${se.lo?` (${pct(se.lo[i])}–${pct(se.hi[i])})`:""} · ${se.n[i].toLocaleString()} pairs`})}
     // 4. causal-gene ranking
     let cv="rank",cc="Pan-UKB"; const drawC=()=>{const C=A.causal[cc]; if(!C) return;
       if(cv==="rank"){const mk=(k,name,c,w,dash)=>({name,c,w,dash,pts:true,x:C.k,y:C.top[k]});
-        lineChart($("#causc"),{label:"Burden gene rank",h:380,xd:[1,15],yd:[0,1],xt:[1,3,5,10,15],yt:[0,.2,.4,.6,.8,1],fx:v=>"top "+v,fy:pc0,xl:"Candidate genes considered at each locus (ranked)",yl:"% of loci with the burden gene in the top k",
+        lineChart($("#causc"),{label:"Burden gene rank",W:700,mr:112,h:360,xd:[1,15],yd:[0,1],xt:[1,3,5,10,15],yt:[0,.2,.4,.6,.8,1],fx:v=>"top "+v,fy:pc0,xl:"Candidate genes considered at each locus (ranked)",yl:"% of loci with the burden gene in the top k",
           series:[mk("pc","P(causal)","--c-min",3),mk("near","Nearest gene","--c-cd",2),mk("pg","rE2G link alone","--c-tw",2),mk("rand","Random order","--faint",1.5,true)],
           head:xv=>`Top ${Math.round(xv)} candidates`,row:(se,i)=>`<span style="color:var(${se.c})">●</span> ${esc(se.name)}: ${pc0(se.y[i])} of loci`});
         $("#causcap").textContent=`${C.loci.toLocaleString()} loci, median ${C.cand_median} protein-coding candidates per locus.${cc==="FinnGen"?" FinnGen uses the Pan-UKB coefficients; few loci, so the curves are noisy.":""}`}
       else{const s0={name:"P(causal)",c:"--c-min",w:3,pts:true,x:C.cal.map(r=>r.pred),y:C.cal.map(r=>r.obs),n:C.cal.map(r=>r.n)};
-        lineChart($("#causc"),{label:"P(causal) calibration",h:380,xd:[0,1],yd:[0,1],xt:[0,.2,.4,.6,.8,1],yt:[0,.2,.4,.6,.8,1],fx:pc0,fy:pc0,diag:"perfect calibration",xl:"Predicted P(causal), binned",yl:"Observed share that are burden genes",
+        lineChart($("#causc"),{label:"P(causal) calibration",W:700,mr:112,h:360,xd:[0,1],yd:[0,1],xt:[0,.2,.4,.6,.8,1],yt:[0,.2,.4,.6,.8,1],fx:pc0,fy:pc0,diag:"perfect calibration",xl:"Predicted P(causal), binned",yl:"Observed share that are burden genes",
           series:[s0],head:()=>"Bin",row:(se,i)=>`Predicted ${pc0(se.x[i])}, observed ${pc0(se.y[i])} · ${se.n[i].toLocaleString()} candidates`});
         $("#causcap").textContent=`Candidate genes at the ${C.loci.toLocaleString()} burden-gene loci, binned by P(causal).`}};
     drawC();
@@ -321,8 +378,8 @@ function aboutPage(){
     $("#cct").addEventListener("click",e=>{const b=e.target.closest("button"); if(!b) return; $("#cct").querySelectorAll(".chip").forEach(x=>x.classList.toggle("on",x===b)); cc=b.dataset.v; drawC()});
     // 3. drug
     const D2=A.drug,mk=(k,name,c,w)=>({name,c,w,x:D2[k].n.map(v=>v/D2[k].N),y:D2[k].p,lo:D2[k].lo,hi:D2[k].hi,n:D2[k].n,N:D2[k].N,endNote:`${D2[k].N} · ${pc0(D2[k].p[D2[k].p.length-1])}`});
-    const CE=D2.ceiling||{}; const cref=(k,c)=>CE[k]?[{y:CE[k].p,c,right:true,label:`burden-known signs (n=${CE[k].n})`}]:[];
-    lineChart($("#drugc"),{label:"Drug target balanced accuracy",h:400,xd:[0,1],yd:[.2,1],xt:[0,.25,.5,.75,1],yt:[.2,.3,.4,.5,.6,.7,.8,.9,1],fx:pc0,fy:pc0,refs:[{y:.5,label:"chance"},...cref("approved","--c-min"),...cref("all","--c-new")],
+    const CE=D2.ceiling||{}; const cref=(k,c)=>CE[k]?[{y:CE[k].p,c,right:true,note:true,label:`${CE[k].n} · ${pc0(CE[k].p)}`}]:[];
+    lineChart($("#drugc"),{label:"Drug target balanced accuracy",W:700,h:380,xd:[0,1],yd:[.2,1],xt:[0,.25,.5,.75,1],yt:[.2,.3,.4,.5,.6,.7,.8,.9,1],fx:pc0,fy:pc0,refs:[{y:.5,label:"chance"},...cref("approved","--c-min"),...cref("all","--c-new")],
       xl:"% of each curve's drug targets, most confident first",yl:"Balanced accuracy",
       series:[mk("approved","Approved drugs","--c-min",3),mk("all","All drugs, phase 2+","--c-new",2)],
       head:xv=>`${pc0(xv)} of targets selected`,row:(se,i)=>`<span style="color:var(${se.c})">●</span> ${esc(se.name)}: ${pc0(se.y[i])} balanced accuracy (${pc0(se.lo[i])}–${pc0(se.hi[i])}), top ${se.n[i]} of ${se.N}`});
@@ -390,34 +447,42 @@ function home(){
 // ---------- trait page (B)
 function traitPage(t){const T=D.traits[t], rows=byT[t].map(P), hasX=((D.matches||{})[t]||[]).length>0;
   const n=[.1,.2,.3].map(c=>rows.filter(p=>p.pw<=c).length);
-  const t0=.3; let st={tier:t0,cls:"all",bur:"all",sort:"pw",lim:50};
+  const t0=.3; let st={tier:t0,cls:"all",bur:"all",sort:"j",lim:50,open:new Set()};
+  // default order: P(causal) x P(right). A call made by the trait's own burden test is direct evidence that the gene acts on the trait, so it counts as causal here
+  const jo=p=>(p.src===6?1:(p.pc??0))*(1-p.pw), CMP={j:(a,b)=>jo(b)-jo(a)||a.pw-b.pw,pw:(a,b)=>a.pw-b.pw||jo(b)-jo(a),pc:(a,b)=>(b.pc??-1)-(a.pc??-1)||a.pw-b.pw};
   app.innerHTML=`<div class="kicker"><a href="#home">Traits</a> · ${esc(T.cohort)} · ${esc(T.cat)}</div>
   <h1>${esc(T.name)}</h1>
   <section class="sec" style="margin-top:56px">
-    <div class="filters">
+    <div class="filters one">
       <span><span class="lab">Chance wrong</span> <span class="tabs" id="ft">${[[.1,"≤ 10%"],[.2,"≤ 20%"],[.3,"≤ 30%"]].map(([v,l])=>`<button class="chip ${v===t0?"on":""}" data-v="${v}">${l}</button>`).join("")}</span></span>
-      <span><span class="lab">Lead variant</span> <span class="tabs" id="fc">${[["all","All"],["reg_linked","Enhancer-linked"],["reg_unlinked","Unlinked"],["coding","Coding"]].map(([v,l])=>`<button class="chip ${v==="all"?"on":""}" data-v="${v}">${l}</button>`).join("")}</span></span>
-      <span><span class="lab">Burden test</span> <span class="tabs" id="fb">${[["all","All"],["call","Drives the call"],["none","Not present"]].map(([v,l])=>`<button class="chip ${v==="all"?"on":""}" data-v="${v}">${l}</button>`).join("")}</span></span>
+      <span><span class="lab">Lead variant</span> <span class="tabs" id="fc">${[["all","All",""],["reg_linked","Linked","The lead variant sits in an enhancer linked to the gene"],["reg_unlinked","Unlinked","A common non-coding lead variant with no enhancer link to the gene"],["coding","Coding","A coding variant leads the locus"]].map(([v,l,tip])=>`<button class="chip ${v==="all"?"on":""}" data-v="${v}"${tip?` data-tip="${tip}"`:""}>${l}</button>`).join("")}</span></span>
+      <span><span class="lab">Burden</span> <span class="tabs" id="fb">${[["all","All",""],["call","Significant","The trait's own gene-burden test is significant"],["none","None","No gene-burden evidence for the pair"]].map(([v,l,tip])=>`<button class="chip ${v==="all"?"on":""}" data-v="${v}"${tip?` data-tip="${tip}"`:""}>${l}</button>`).join("")}</span></span>
+      <span><span class="lab">Rank by</span> <span class="tabs" id="fs">${[["j","Causal × right","P(causal) × P(right); a call made by the trait's own burden test counts as causal"],["pw","Right","Lowest chance wrong first"],["pc","Causal","Highest P(causal) at the locus first"]].map(([v,l,tip])=>`<button class="chip ${v==="j"?"on":""}" data-v="${v}" data-tip="${tip}">${l}</button>`).join("")}</span></span>
     </div>
     <div class="evkey">Evidence from each source: ${evCells({ev:[[1,.05],[-1,.2],[1,.4],[null,null],[null,null],[null,null]],src:0},true)} <span><span class="sw" style="background:var(--up)"></span>More gene, ${esc(T.kind==="q"?"higher":"higher risk")}</span><span><span class="sw" style="background:var(--down)"></span>More gene, ${esc(T.kind==="q"?"lower":"lower risk")}</span></div>
-    <div class="tw"><table><thead><tr><th>Gene</th><th>More gene</th><th class="sortable sorted" data-s="pw">Chance wrong<br><span style="font-weight:400;letter-spacing:0;text-transform:none">0 · 20% · 50%</span></th><th class="sortable" data-s="pc">Causal at locus</th><th>${evHead()}</th>${hasX?`<th>Other cohorts</th>`:""}<th>Locus</th></tr></thead><tbody id="tb"></tbody></table></div>
+    <div class="tw"><table><thead><tr><th>Gene</th><th>More gene</th><th class="sortable" data-s="pw">Chance wrong<br><span style="font-weight:400;letter-spacing:0;text-transform:none">0 · 20% · 50%</span></th><th class="sortable" data-s="pc">Causal at locus</th><th>${evHead()}</th>${hasX?`<th>Other cohorts</th>`:""}<th>Locus</th><th data-tip="More genes at the same locus">More</th></tr></thead><tbody id="tb"></tbody></table></div>
     <div class="more" id="more"></div></section>`;
-  const draw=()=>{let r=rows.filter(p=>p.pw<=st.tier&&(st.cls==="all"||p.cls===st.cls)&&(st.bur==="all"||(st.bur==="call"?p.src===6:!p.bu)));
-    r.sort(st.sort==="pw"?(a,b)=>a.pw-b.pw:(a,b)=>(b.pc??-1)-(a.pc??-1)||a.pw-b.pw);
-    const show=r.slice(0,st.lim);
-    $("#tb").innerHTML=show.map(p=>{const L=p.loc>=0&&D.locpos[p.loc]?{c:D.locpos[p.loc][0],p:D.locpos[p.loc][1]}:null;return `<tr tabindex="0" data-h="${link("p",T.id,gid(p.g))}"><td class="gn">${esc(gname(p.g))}${rx(p.g)}</td>
+  const draw=()=>{let r=rows.filter(p=>p.pw<=st.tier&&(st.cls==="all"||p.cls===st.cls)&&(st.bur==="all"||(st.bur==="call"?p.sig!==0:!p.bu)));
+    r.sort(CMP[st.sort]);
+    // genes that share a locus fold under the locus's first gene in the current order
+    const GR=[],ix=new Map(); r.forEach(p=>{const k=p.loc>=0?"l"+p.loc:"g"+p.g; if(!ix.has(k)){ix.set(k,GR.length);GR.push({k,m:[]})} GR[ix.get(k)].m.push(p)});
+    const show=GR.slice(0,st.lim).flatMap(g=>g.m.slice(0,st.open.has(g.k)?g.m.length:1).map((p,i)=>({p,g,i})));
+    $("#tb").innerHTML=show.map(({p,g,i})=>{const L=p.loc>=0&&D.locpos[p.loc]?{c:D.locpos[p.loc][0],p:D.locpos[p.loc][1]}:null,nx=g.m.length-1,op=st.open.has(g.k);return `<tr tabindex="0"${i?` class="sub"`:""} data-h="${link("p",T.id,gid(p.g))}"><td class="gn">${esc(gname(p.g))}${rx(p.g)}</td>
       <td class="dir ${p.s>0?"up":"down"}">${p.s>0?"▲ raises":"▼ lowers"}</td>
       <td><div class="dotax" data-tip="<b>${fw(p.pw)}</b> chance the direction is wrong"><b style="left:${Math.min(Math.max(p.pw,.05),.5)/.5*100}%;opacity:${p.pw>.3?.45:1}"></b></div></td>
       <td><div class="mbar"><div class="pbar"><i style="width:${(p.pc??0)*100}%"></i></div><span class="num">${p.pc==null?"–":Math.round(p.pc*100)+"%"}</span></div></td>
-      <td>${evCells(p)}</td>${hasX?`<td>${crossCell(p)}</td>`:""}<td class="num" style="font-size:12.5px;color:var(--muted);white-space:nowrap">${L&&L.c?`chr${L.c}:${(L.p/1e6).toFixed(1)} Mb`:"–"}</td></tr>`}).join("")||`<tr><td colspan="${hasX?7:6}" style="color:var(--muted);padding:28px 0">No genes pass these filters.</td></tr>`;
-    $("#more").innerHTML=r.length>st.lim?`<button class="btn" id="mb">Show ${Math.min(50,r.length-st.lim)} more of ${r.length-st.lim}</button>`:`<span class="note">${r.length} genes shown.</span>`;
+      <td>${evCells(p)}</td>${hasX?`<td>${crossCell(p)}</td>`:""}<td class="num" style="font-size:12.5px;color:var(--muted);white-space:nowrap">${L&&L.c?`chr${L.c}:${(L.p/1e6).toFixed(1)} Mb`:"–"}</td><td class="lxc">${!i&&nx?`<button class="lx" data-l="${g.k}" aria-expanded="${op}" data-tip="${op?"Hide":"Show"} ${nx} more gene${nx===1?"":"s"} at this locus">${op?"−":"+"}${nx}</button>`:""}</td></tr>`}).join("")||`<tr><td colspan="${hasX?8:7}" style="color:var(--muted);padding:28px 0">No genes pass these filters.</td></tr>`;
+    $("#more").innerHTML=GR.length>st.lim?`<button class="btn" id="mb">Show ${Math.min(50,GR.length-st.lim)} more of ${GR.length-st.lim} loci</button>`:`<span class="note">${r.length} genes at ${GR.length} loci.</span>`;
     $("#mb")?.addEventListener("click",()=>{st.lim+=50;draw()})};
   const chips=(id,key,conv)=>$(id).addEventListener("click",e=>{const b=e.target.closest("button"); if(!b) return; $(id).querySelectorAll(".chip").forEach(x=>x.classList.toggle("on",x===b)); st[key]=conv(b.dataset.v); st.lim=50; draw()});
   chips("#ft","tier",Number); chips("#fc","cls",String); chips("#fb","bur",String);
-  document.querySelectorAll("th.sortable").forEach(th=>th.addEventListener("click",()=>{st.sort=th.dataset.s;document.querySelectorAll("th.sortable").forEach(x=>x.classList.toggle("sorted",x===th));draw()}));
-  $("#tb").addEventListener("click",e=>{const tr=e.target.closest("tr[data-h]"); if(tr) location.hash=tr.dataset.h.slice(1)});
-  $("#tb").addEventListener("keydown",e=>{const tr=e.target.closest("tr[data-h]"); if(tr&&e.key==="Enter") location.hash=tr.dataset.h.slice(1)});
-  draw()}
+  const setSort=v=>{st.sort=v; st.lim=50; document.querySelectorAll("th.sortable").forEach(x=>x.classList.toggle("sorted",v==="j"||x.dataset.s===v)); $("#fs").querySelectorAll(".chip").forEach(x=>x.classList.toggle("on",x.dataset.v===v)); draw()};
+  $("#fs").addEventListener("click",e=>{const b=e.target.closest("button"); if(b) setSort(b.dataset.v)});
+  document.querySelectorAll("th.sortable").forEach(th=>th.addEventListener("click",()=>setSort(th.dataset.s)));
+  $("#tb").addEventListener("click",e=>{const x=e.target.closest(".lx"); if(x){e.stopPropagation(); st.open.has(x.dataset.l)?st.open.delete(x.dataset.l):st.open.add(x.dataset.l); draw(); return}
+    const tr=e.target.closest("tr[data-h]"); if(tr) location.hash=tr.dataset.h.slice(1)});
+  $("#tb").addEventListener("keydown",e=>{if(e.target.closest(".lx")) return; const tr=e.target.closest("tr[data-h]"); if(tr&&e.key==="Enter") location.hash=tr.dataset.h.slice(1)});
+  setSort("j")}
 
 // ---------- gene page (E)
 function genePage(g){const G=D.genes[g]; let all=byG.get(g).map(P); let st={coh:"all",weak:false};
@@ -468,16 +533,29 @@ function pairRender(t,g,DT){const T=D.traits[t],G=D.genes[g],a=pairKey.get(t+"|"
   const key=r=>r.i===p.src?-1:r.z==null||r.f==null?9:r.f;   // the call's source first, then the others by chance wrong, sources without evidence last
   const ord=p.ev.map((e,i)=>({i,z:e[0],f:e[1]})).concat([{i:6,z:p.bu?p.bu[0]:null,f:p.bu?p.bu[1]:null},{i:7,z:p.tr?p.tr[0]:null,f:p.tr?p.tr[1]:null}]).sort((x,y)=>key(x)-key(y)||x.i-y.i);
   const zone=x=>`<div class="z" style="width:${.2/.5*100}%"></div>`;
+  const ct=dt&&dt[4], trRow=ord.find(r=>r.i===7), hasTr=trRow.z!=null&&trRow.f!=null, callTr=p.src===7, arrow=v=>`<span class="${v>0?"up":"down"}">${v>0?"▲ raises":"▼ lowers"}</span>`;
+  // the traits a carried-over direction comes from: the gene's direction there, the direction it carries over as, and the two traits' genetic correlation
+  const cod=xt&&xt[1], showTr=hasTr&&ct&&ct.length, pipf=v=>`<span class="num" style="color:var(--muted)"> · <i class="pl">PIP </i>${v.toFixed(2)}</span>`;
+  const ctRows=()=>ct.map(([ref,sa,im,r,v,nv,pa,pb,b,da,db])=>{const on=typeof ref==="number",T2=on?D.traits[ref]:null,nm=on?T2.name:ref[0],co=on?T2.cohort:ref[1],has=on&&pairKey.has(ref+"|"+g);
+      return `<div class="evrow ot"><span class="s">${has?`<a class="gl" href="${link("p",T2.id,G[0])}">${esc(nm)}</a>`:esc(nm)}<em>${esc(co)}${r==null?"":` · <span class="num">rg ${r<0?"−":""}${Math.abs(r/100).toFixed(2)}</span>`}</em></span>${arrow(sa)}
+        <span class="num var">chr${v[0]}:${v[1].toLocaleString()} ${esc(v[2])}${nv>1?`<em>and ${nv-1} more</em>`:""}</span><span class="al">${arrow(da)}${pipf(pa)}</span><span class="al">${arrow(db)}${pipf(pb)}</span>
+        <span>${arrow(im)}</span>${cod?"":`<span class="num" style="color:var(--muted);font-size:13px;white-space:nowrap">${b?`<span data-tip="${esc(D.btests[b[0]])}">${sci(b[1])}</span>`:""}</span>`}</div>`}).join("")+(xt&&xt[0]>ct.length?`<div class="evrow ct more">and ${xt[0]-ct.length} more trait${xt[0]-ct.length===1?"":"s"}</div>`:"");
+  const rowH=({i,z,f})=>{const h=z==null||f==null?`<div class="evrow none"><span class="s">${i===6?"Gene-burden test":SRCS[i]}</span><span>No evidence</span><span></span><span></span></div>`:
+      `<div class="evrow${i===p.src?" call":" oth"}"><span class="s">${i===6?"Gene-burden test":SRCS[i]}</span><span class="${z>0?"up":"down"}">${z>0?"▲ raises":"▼ lowers"}</span>
+       <div class="axis" data-tip="<b>${i===6?"Gene-burden test":SRCS[i]}</b>: ${fw(f)} chance wrong">${zone()}<b style="left:${Math.min(Math.max(f,.05),.5)/.5*100}%;background:var(${z>0?"--up":"--down"});opacity:${i===p.src?1:.75}"></b><span class="dl num" style="${f>.4?`right:calc(${100-Math.min(Math.max(f,.05),.5)/.5*100}% + 10px)`:`left:calc(${Math.min(Math.max(f,.05),.5)/.5*100}% + 10px)`}">${fw(f)}</span></div><span class="num" style="color:var(--muted);font-size:13px;white-space:nowrap">${i===6?(bt?`<span data-tip="${esc(BT)}">P = ${sci(bt[1])}</span>`:""):i===7?(xt?`<span data-tip="The gene's direction is known for ${xt[0]===1?"another trait":xt[0]+" other traits"} from ${xt[1]?"a fine-mapped coding variant":"a gene-burden test"}; a fine-mapped variant shared with this trait carries it over">${xt[0]} trait${xt[0]===1?"":"s"}</span>`:""):dt?strength(i,z):""}</span></div>${i===p.src&&i<6?shapBlock(p):""}`; return h};
   app.innerHTML=`<div class="kicker"><a href="${link("t",T.id)}">${esc(T.name)}</a> · <a href="${link("g",G[0])}">${esc(G[1])}</a> · ${esc(T.cohort)}</div>
   <p class="answer">${weak?`The evidence leans toward more <span class="g">${esc(G[1])}</span> predicting <span class="${cls}">${esc(effect(t,p.s))}</span>, but this is close to a coin flip.`:`More <span class="g">${esc(G[1])}</span> predicts <span class="${cls}">${esc(effect(t,p.s))}</span>.`}</p>
   <div class="meter"><div class="kicker">Chance this direction is wrong</div>
     <div class="track"><div class="zone" style="left:0;width:40%"></div><div class="pin" style="left:${Math.min(Math.max(p.pw,.05),.5)/.5*100}%"></div><div class="pinlab num" style="left:${Math.min(Math.max(p.pw,.05),.5)/.5*100}%">${fw(p.pw)}</div></div>
     <div class="ticks num"><span>0%</span><span>10%</span><span>20%</span><span>30%</span><span>40%</span><span>50%, a coin flip</span></div></div>
   <section class="sec"><h2>Evidence from each source</h2>    <div class="evrow head"><span>Source</span><span>More gene</span><span>Chance wrong · 0 to 50%</span><span>Strength</span></div>
-    ${ord.map(({i,z,f},k)=>(k===1?`<div class="evrow sub"><span>Other sources</span><span></span><span></span><span></span></div>`:"")+(z==null||f==null?`<div class="evrow none"><span class="s">${i===6?"Gene-burden test":SRCS[i]}</span><span>No evidence</span><span></span><span></span></div>`:
-      `<div class="evrow${i===p.src?" call":" oth"}"><span class="s">${i===6?"Gene-burden test":SRCS[i]}</span><span class="${z>0?"up":"down"}">${z>0?"▲ raises":"▼ lowers"}</span>
-       <div class="axis" data-tip="<b>${i===6?"Gene-burden test":SRCS[i]}</b>: ${fw(f)} chance wrong">${zone()}<b style="left:${Math.min(Math.max(f,.05),.5)/.5*100}%;background:var(${z>0?"--up":"--down"});opacity:${i===p.src?1:.75}"></b><span class="dl num" style="${f>.4?`right:calc(${100-Math.min(Math.max(f,.05),.5)/.5*100}% + 10px)`:`left:calc(${Math.min(Math.max(f,.05),.5)/.5*100}% + 10px)`}">${fw(f)}</span></div><span class="num" style="color:var(--muted);font-size:13px;white-space:nowrap">${i===6?(bt?`<span data-tip="${esc(BT)}">P = ${sci(bt[1])}</span>`:""):i===7?(xt?`<span data-tip="The gene's direction is known for ${xt[0]===1?"another trait":xt[0]+" other traits"} from ${xt[1]?"a fine-mapped coding variant":"a gene-burden test"}; a fine-mapped variant shared with this trait carries it over">${xt[0]} trait${xt[0]===1?"":"s"}</span>`:""):dt?strength(i,z):""}</span></div>${i===p.src&&i<6?shapBlock(p):""}`)).join("")}
+    ${rowH(ord[0])}<div class="evrow sub"><span>Other sources</span><span></span><span></span><span></span></div>${ord.slice(1).filter(r=>!(showTr&&r.i===7)).map(r=>rowH(r)).join("")}
   </section>
+  ${showTr?`<section class="sec"><h2>Direction in other traits, from ${cod?"coding variants":"gene-burden tests"}</h2>
+    ${callTr?"":(x=>`<div class="meter"><div class="kicker">Chance this direction is wrong</div><div class="track"><div class="zone" style="left:0;width:40%"></div><div class="pin" style="left:${x}%"></div><div class="pinlab num" style="left:${x}%">${fw(trRow.f)}</div></div>
+    <div class="ticks num"><span>0%</span><span>10%</span><span>20%</span><span>30%</span><span>40%</span><span>50%, a coin flip</span></div></div>`)(Math.min(Math.max(trRow.f,.05),.5)/.5*100)}<div class="evrow ot head"><span>Trait</span><span>More gene there</span><span>Shared variant</span><span>Alt allele there · PIP</span><span>Alt allele here · PIP</span><span>Carried over as</span>${cod?"":"<span>Burden P</span>"}</div>
+    ${ctRows()}
+  </section>`:""}
   ${(X=>X.length?`<section class="sec"><h2>Other cohorts</h2>
     <div class="evrow head"><span>Trait</span><span>More gene</span><span>Chance wrong · 0 to 50%</span><span>Agreement</span></div>
     ${X.map(x=>{const T2=D.traits[x.t],f=x.pw;return `<div class="evrow"><span class="s"><a class="gl" href="${link("p",T2.id,G[0])}">${esc(T2.name)}</a><em>${esc(T2.cohort)}</em></span><span class="${x.s>0?"up":"down"}">${x.s>0?"▲ raises":"▼ lowers"}</span>
@@ -493,8 +571,128 @@ function pairRender(t,g,DT){const T=D.traits[t],G=D.genes[g],a=pairKey.get(t+"|"
   </section>`}
 
 // ---------- router
+// ---------- graph page: traits on a ring, genes placed by the traits they link; confident calls only (prototype kept in site/graph.html)
+const GGRP=[["Blood cells","#3f8d87"],["Biochemistry","#c9922a"],["Body size","#7b5ea7"],["Cardiovascular","#b04a8c"],["Metabolic","#5a8f3c"],["Respiratory","#8a6d4b"],["Cancer","#5b6b7a"],["Eye","#9a9a2e"],["Immune and skin","#c77b8e"],["Digestive and kidney","#2f6f4f"],["Other","#a8a8a8"]];
+function traitGroup(T){const c=(T.cat||"").toLowerCase(), n=(T.name||"").toLowerCase();   // broad trait groups for the ring, from the cohort's category and then the trait name
+  if(c==="blood count") return 0; if(c==="blood biochemistry"||c==="urine assays") return 1;
+  if(/body size|impedance|bone-densitometry|hand grip|early life/.test(c)) return 2;
+  if(/circulatory|blood pressure|arterial|cardiometabolic/.test(c)) return 3;
+  if(/endocrine|diabetes/.test(c)) return 4;
+  if(/respiratory|spirometry|asthma|copd|lung/.test(c)) return 5;
+  if(/neoplasm/.test(c)) return 6; if(/\beye|eyesight/.test(c)) return 7;
+  if(/\bcount|haemoglobin|hemoglobin|platelet|corpuscular|reticulocyte|eosinophil|neutrophil|lymphocyte|monocyte|basophil|h(a)?ematocrit/.test(n)) return 0;
+  if(/cholesterol|triglycerid|apolipoprotein|bilirubin|creatinine|urate|albumin|phosphatase|transferase|testosterone|shbg|vitamin d|c-reactive|cystatin|igf|calcium|urea|lipoprotein|glucose|hba1c|glycated/.test(n)) return 1;
+  if(/height|body mass|\bbmi\b|weight|waist|hip circ|\bfat\b|bone mineral/.test(n)) return 2;
+  if(/coronary|heart|atrial|hypertens|stroke|blood pressure|venous|aneurysm|cardio|myocard|angina|varicose|thromb/.test(n)) return 3;
+  if(/diabet|insulin|thyroid|gout|obes|lipid|statin/.test(n)) return 4;
+  if(/asthma|copd|\bfev|\bfvc|pulmon|lung function/.test(n)) return 5;
+  if(/cancer|carcinoma|neoplasm|melanoma|leuk(a)?emia|lymphoma|tumou?r/.test(n)) return 6;
+  if(/glaucoma|cataract|macular|myopia|intraocular|retina|refractive/.test(n)) return 7;
+  if(/autoimmun|skin and subcutaneous|rheuma/.test(c)||/lupus|rheumatoid|psoria|dermatitis|eczema|crohn|colitis|inflammatory bowel|ankylosing|sarcoid|sclerosis|allergic|cholangitis|myasthenia|vitiligo|juvenile arthritis|rhinosinusitis|keratosis/.test(n)) return 8;
+  if(/digestive|genitourinary|gastrointestinal/.test(c)||/pancreat|cholelith|gall|liver|renal|kidney|calculus|reflux|cholecyst/.test(n)) return 9;
+  return 10}
+function graphPage(){
+  const TT=D.traits.map((t,i)=>({...t,i,grp:traitGroup(t)}));
+  // score = P(causal) x P(right); a call made by the trait's own burden test counts as causal, as in the trait page's default order
+  const PA=D.pairs.map(a=>({t:a[0],g:a[1],s:a[2],pw:a[3],src:a[4],j:(a[4]===6?1:(a[5]??0))*(1-a[3])})).filter(p=>p.j>=.5);
+  const st={th:.7,mn:3,unit:"g",grp:new Set(GGRP.map((_,i)=>i)),pins:new Set(),sel:null,hov:null,list:"hub",ob:false,extra:new Set()};   // extra: genes picked from a list that the "gene links" setting would hide
+  const chipRow=(id,opts,cur)=>`<span class="tabs" id="${id}">${opts.map(([v,l])=>`<button class="chip ${v===cur?"on":""}" data-v="${v}">${l}</button>`).join("")}</span>`;
+  app.innerHTML=`<div class="kicker">SIGNPOST · Graph</div><h1>Genes across traits</h1>
+  <p class="dek">Traits sit on the ring and each gene is placed among the traits it is called for, so genes that reach across trait groups fall toward the middle.</p>
+  <section class="sec" style="margin-top:44px">
+    <div class="filters">
+      <span><span class="lab">Causal × right</span> ${chipRow("gth",[[.5,"≥ 0.5"],[.6,"≥ 0.6"],[.7,"≥ 0.7"],[.8,"≥ 0.8"],[.9,"≥ 0.9"]],st.th)}</span>
+      <span><span class="lab">Gene links</span> ${chipRow("gmn",[[1,"≥ 1"],[2,"≥ 2"],[3,"≥ 3"],[5,"≥ 5"],[8,"≥ 8"]],st.mn)} ${chipRow("gun",[["g","Trait groups"],["t","Traits"]],st.unit)}</span>
+    </div>
+    <div class="filters" style="margin-bottom:14px"><span class="lab">Trait groups</span><span id="ggr">${GGRP.map((g,i)=>`<button class="chip gchip on" data-g="${i}"><i style="background:${g[1]}"></i>${g[0]} <span class="num" style="color:var(--muted);margin-left:5px">${TT.filter(t=>t.grp===i).length}</span></button>`).join("")}</span></div>
+    <div class="filters"><span class="lab">Only these traits</span><span class="gpick"><input type="search" id="gts" placeholder="Add a trait" autocomplete="off" aria-label="Restrict the graph to a trait"><div class="gres" id="gres" hidden></div></span><span id="gpins" style="display:flex;flex-wrap:wrap;gap:4px"></span></div>
+    <div class="gwrap"><div><div class="gstage"><div class="gstat" id="gstat"></div><div class="gzoom"><button data-z="1.3" aria-label="Zoom in">+</button><button data-z="0.77" aria-label="Zoom out">−</button><button data-z="0" aria-label="Reset the view">⟲</button></div><canvas id="gcv"></canvas></div>
+      <div class="gkey"><span><i style="background:var(--up)"></i>More gene raises the trait</span><span><i style="background:var(--down)"></i>Lowers it</span><span><b style="background:var(--ink);border-radius:50%"></b>Gene, sized by its number of traits</span><span><b style="background:var(--faint)"></b>Trait, coloured by group</span><span><i style="background:none;border-top:2px dashed var(--muted);height:0"></i>Against the gene's related traits</span></div></div>
+      <div class="gside" id="gside"></div></div></section>`;
+  const cv=$("#gcv"),ctx=cv.getContext("2d"),cssv=n=>getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+  let W=700,H=700,nodes=[],links=[],adj=new Map(),GS=new Map(),E=[],ODD=[],R=0,nt=0,tf={x:0,y:0,k:1};
+  const size=()=>{const w=cv.parentElement.clientWidth,d=devicePixelRatio||1; W=w; H=Math.min(700,Math.max(420,w)); cv.style.height=H+"px"; cv.width=W*d; cv.height=H*d; ctx.setTransform(d,0,0,d,0,0)};
+  const allowed=t=>st.pins.size?st.pins.has(t.i):st.grp.has(t.grp);
+  function build(){E=PA.filter(p=>p.j>=st.th&&allowed(TT[p.t])); GS=new Map();
+    E.forEach(p=>{let x=GS.get(p.g); if(!x) GS.set(p.g,x={g:p.g,tr:[],grp:new Set(),up:0,dn:0,fp:GGRP.map(()=>[0,0])}); x.tr.push(p); x.grp.add(TT[p.t].grp); p.s>0?x.up++:x.dn++; x.fp[TT[p.t].grp][p.s>0?0:1]++});
+    // calls against the pattern: two traits that share 8+ genes at these settings have a usual relation when 80% or more of those genes act the same way on both
+    // (or 80% or more act in opposite ways); a gene's call for a trait is flagged when it breaks that relation with 70% or more of at least three of its other traits
+    const pn=new Map(); GS.forEach(x=>{const a=x.tr; for(let i=0;i<a.length;i++) for(let k=i+1;k<a.length;k++){const key=Math.min(a[i].t,a[k].t)*4096+Math.max(a[i].t,a[k].t); let o=pn.get(key); if(!o) pn.set(key,o=[0,0]); o[0]++; if(a[i].s===a[k].s) o[1]++}});
+    const usual=(u,v)=>{const o=pn.get(Math.min(u,v)*4096+Math.max(u,v)); if(!o||o[0]<8) return 0; const c=o[1]/o[0]; return c>=.8?1:c<=.2?-1:0};
+    ODD=[]; GS.forEach(x=>{x.odd=new Map(); const a=x.tr; if(a.length<4) return; a.forEach(p=>{let m=0,nb=0; const b=[]; a.forEach(q=>{if(q===p) return; const r=usual(p.t,q.t); if(!r) return; m++; if(p.s*q.s!==r){b.push(q.t); if(q.src===6) nb++}}); if(m>=3&&b.length/m>=.7){x.odd.set(p.t,{m,b,nb}); ODD.push({g:x.g,p,m,b,nb})}})});   // nb: how many of the opposing calls are themselves burden tests
+    ODD.sort((a,b)=>b.b.length-a.b.length||a.p.pw-b.p.pw);
+    const keep=new Set([...GS.values()].filter(x=>(st.unit==="g"?x.grp.size:x.tr.length)>=st.mn||st.extra.has(x.g)).map(x=>x.g)), EE=E.filter(p=>keep.has(p.g));
+    const tids=[...new Set(EE.map(p=>p.t))].sort((a,b)=>TT[a].grp-TT[b].grp||TT[a].name.localeCompare(TT[b].name)||TT[a].cohort.localeCompare(TT[b].cohort));
+    R=Math.min(W,H)/2-(tids.length<=64?150:100); nt=tids.length; const ng=new Set(tids.map(t=>TT[t].grp)).size,gap=ng>1?.05:0,step=(2*Math.PI-gap*ng)/Math.max(1,tids.length),deg=new Map(),tn=new Map(); let a=-Math.PI/2,pg=-1;
+    EE.forEach(p=>deg.set(p.t,(deg.get(p.t)||0)+1));
+    tids.forEach(t=>{if(TT[t].grp!==pg){if(pg>=0) a+=gap; pg=TT[t].grp} tn.set(t,{id:"t"+t,kind:"t",t,name:TT[t].name,grp:TT[t].grp,ang:a,x:R*Math.cos(a),y:R*Math.sin(a),r:3+Math.min(6,Math.sqrt(deg.get(t))/2.2),deg:deg.get(t)}); a+=step});
+    let seed=7; const rnd=()=>(seed=(seed*16807)%2147483647)/2147483647-.5;   // fixed jitter, so the same settings give the same picture
+    const G=[...keep].map((g,q)=>{const x=GS.get(g); let sx=0,sy=0; x.tr.forEach(p=>{const n=tn.get(p.t); sx+=n.x; sy+=n.y}); const ax=sx/x.tr.length,ay=sy/x.tr.length; return {id:"g"+g,kind:"g",g,q,name:gname(g),ax,ay,x:ax+rnd()*10,y:ay+rnd()*10,r:2.2+Math.sqrt(x.tr.length)*.85,deg:x.tr.length,ng:x.grp.size}});
+    // each gene settles at the centre of its traits; overlapping genes push apart
+    const cs=2*Math.max(3,...G.map(n=>n.r))+3;
+    for(let it=0;it<160;it++){const grid=new Map(); for(const n of G){n.x+=(n.ax-n.x)*.1; n.y+=(n.ay-n.y)*.1; const k=Math.floor(n.x/cs)+","+Math.floor(n.y/cs),c=grid.get(k); c?c.push(n):grid.set(k,[n])}
+      for(const n of G){const cx=Math.floor(n.x/cs),cy=Math.floor(n.y/cs); for(let dx=-1;dx<=1;dx++) for(let dy=-1;dy<=1;dy++){const c=grid.get((cx+dx)+","+(cy+dy)); if(!c) continue;
+        for(const m of c){if(m.q<=n.q) continue; let ux=m.x-n.x,uy=m.y-n.y,d=Math.hypot(ux,uy),mn=n.r+m.r+1.6; if(d>=mn) continue; if(d<1e-6){ux=rnd();uy=rnd();d=Math.hypot(ux,uy)||1} const sh=(mn-d)/2/d; n.x-=ux*sh; n.y-=uy*sh; m.x+=ux*sh; m.y+=uy*sh}}}}
+    const gm=new Map(G.map(n=>[n.g,n])); nodes=[...tn.values(),...G]; links=EE.map(p=>({source:gm.get(p.g),target:tn.get(p.t),s:p.s,odd:GS.get(p.g).odd.has(p.t)}));
+    [...G].sort((a,b)=>b.ng-a.ng||b.deg-a.deg).slice(0,28).forEach(n=>n.lab=true); [...G].sort((a,b)=>b.deg-a.deg).slice(0,60).forEach(n=>n.lab=true);
+    adj=new Map(nodes.map(n=>[n.id,new Set()])); links.forEach(l=>{adj.get(l.source.id).add(l.target.id); adj.get(l.target.id).add(l.source.id)});
+    st.sel=null; st.hov=null; tf={x:0,y:0,k:1}; $("#gstat").textContent=G.length?`${G.length.toLocaleString()} genes · ${tids.length} traits · ${EE.length.toLocaleString()} calls`:"No genes at these settings."; side(); draw()}
+  const focus=()=>{const f=st.sel||st.hov; if(!f) return null; const s=new Set(adj.get(f.id)); s.add(f.id); return s};
+  function draw(){const up=cssv("--up"),dn=cssv("--down"),ink=cssv("--ink"),bg=cssv("--bg"),muted=cssv("--muted"),F=focus(),fn=st.sel||st.hov,k=tf.k;
+    ctx.save(); ctx.clearRect(0,0,W,H); ctx.translate(W/2+tf.x,H/2+tf.y); ctx.scale(k,k);
+    const on=l=>fn&&(l.source===fn||l.target===fn);
+    for(const [col,sg] of [[up,1],[dn,-1]]){ctx.beginPath(); for(const l of links) if(l.s===sg&&!on(l)){ctx.moveTo(l.source.x,l.source.y);ctx.lineTo(l.target.x,l.target.y)} ctx.strokeStyle=col; ctx.globalAlpha=F?.05:Math.max(.12,Math.min(.5,700/(links.length||1))); ctx.lineWidth=.8/k; ctx.stroke()}
+    if(F) for(const od of [false,true]) for(const [col,sg] of [[up,1],[dn,-1]]){ctx.beginPath(); for(const l of links) if(l.s===sg&&l.odd===od&&on(l)){ctx.moveTo(l.source.x,l.source.y);ctx.lineTo(l.target.x,l.target.y)} ctx.strokeStyle=col; ctx.globalAlpha=.9; ctx.lineWidth=(od?2.4:1.3)/k; ctx.setLineDash(od?[5/k,3/k]:[]); ctx.stroke(); ctx.setLineDash([])}
+    for(const n of nodes){ctx.globalAlpha=!F||F.has(n.id)?1:.15; ctx.beginPath(); if(n.kind==="t"){ctx.fillStyle=GGRP[n.grp][1]; ctx.rect(n.x-n.r,n.y-n.r,2*n.r,2*n.r)} else{ctx.fillStyle=ink; ctx.arc(n.x,n.y,n.r,0,7)} ctx.fill(); ctx.lineWidth=1/k; ctx.strokeStyle=bg; ctx.stroke();
+      if(st.sel===n){ctx.beginPath(); ctx.arc(n.x,n.y,n.r+3.5/k,0,7); ctx.strokeStyle=ink; ctx.lineWidth=1.6/k; ctx.stroke()}}
+    ctx.globalAlpha=1; const fs=11.5/k,few=nt<=64,ring=[],placed=[]; ctx.font=`500 ${fs}px "IBM Plex Sans", sans-serif`; ctx.textBaseline="middle";
+    const free=(x,y,w)=>{const h=fs*1.15,b=[x,y-h/2,x+w,y+h/2]; for(const q of placed) if(b[0]<q[2]&&b[2]>q[0]&&b[1]<q[3]&&b[3]>q[1]) return false; placed.push(b); return true};
+    for(const n of [...nodes].sort((a,b)=>(b===fn)-(a===fn)||b.deg-a.deg)){const inf=F&&F.has(n.id),show=F?inf&&(n.kind==="t"||F.size<=46||n===fn||n.lab):(n.kind==="g"?n.lab:few); if(!show) continue;
+      const txt=n.name.length>34?n.name.slice(0,32)+"…":n.name; ctx.fillStyle=inf||n.kind==="g"?ink:muted;
+      if(n.kind==="t"){if(ring.some(a=>Math.abs(a-n.ang)<13/k/R)) continue; ring.push(n.ang); const left=Math.cos(n.ang)<0; ctx.save(); ctx.translate(n.x,n.y); ctx.rotate(left?n.ang+Math.PI:n.ang); ctx.textAlign=left?"right":"left"; ctx.fillText(txt,(left?-1:1)*(n.r+4/k),0); ctx.restore()}
+      else{const x=n.x+n.r+3/k; if(n!==fn&&!free(x,n.y,ctx.measureText(txt).width)) continue; ctx.textAlign="left"; ctx.lineWidth=3/k; ctx.strokeStyle=bg; ctx.strokeText(txt,x,n.y); ctx.fillText(txt,x,n.y)}}
+    if(!few&&!F){const by=new Map(); nodes.forEach(n=>{if(n.kind==="t"){const a=by.get(n.grp)||[]; a.push(n.ang); by.set(n.grp,a)}}); ctx.font=`600 ${10.5/k}px "IBM Plex Sans", sans-serif`; ctx.fillStyle=muted;
+      by.forEach((a,g)=>{const m=a.reduce((s,v)=>s+v,0)/a.length,left=Math.cos(m)<0; ctx.save(); ctx.translate((R+16)*Math.cos(m),(R+16)*Math.sin(m)); ctx.rotate(left?m+Math.PI:m); ctx.textAlign=left?"right":"left"; ctx.fillText(GGRP[g][0].toUpperCase(),0,0); ctx.restore()})}
+    ctx.restore()}
+  const arr=s=>`<span class="${s>0?"up":"down"}">${s>0?"▲":"▼"}</span>`;
+  const fp=x=>`<span class="gfp">${x.fp.map(([u,d],i)=>`<i data-tip="<b>${GGRP[i][0]}</b><br>${u} raised, ${d} lowered" style="${u+d?`border-color:transparent;background:${u&&d?`linear-gradient(var(--up) ${100*u/(u+d)}%,var(--down) 0)`:u?"var(--up)":"var(--down)"}`:""}"></i>`).join("")}</span>`;
+  function side(){const S=$("#gside"),n=st.sel;
+    const OL=st.ob?ODD.filter(o=>o.p.src===6):ODD, tabs=`<div class="tabs" style="margin-bottom:14px"><button class="chip ${st.list==="hub"?"on":""}" data-list="hub">Hub genes</button><button class="chip ${st.list==="odd"?"on":""}" data-list="odd">Against the pattern <span class="num" style="margin-left:5px;opacity:.7">${OL.length}</span></button></div>`;
+    if(!n&&st.list==="odd"){S.innerHTML=tabs+`<p class="gsub">A gene's call for one trait that runs against its calls for related traits, judged by what the genes shared by those traits usually do.</p><div style="margin-bottom:10px"><button class="chip ${st.ob?"on":""}" data-ob aria-pressed="${st.ob}">Burden tests only</button></div>`+(OL.slice(0,60).map(o=>`<button class="grow" data-g="${o.g}"><span><b>${esc(gname(o.g))}</b> ${arr(o.p.s)} ${esc(TT[o.p.t].name)}<em>${SHORT[o.p.src]} call, against ${o.b.length} of ${o.m} related traits (${o.nb} by burden test)</em></span></button>`).join("")||`<p class="gsub">None at these settings.</p>`); return}
+    if(!n){const hubs=[...GS.values()].sort((a,b)=>b.grp.size-a.grp.size||b.tr.length-a.tr.length).slice(0,40);
+      S.innerHTML=tabs+`<p class="gsub">Most trait groups first. One bar per group: red raised, blue lowered.</p>`+hubs.map(x=>`<button class="grow" data-g="${x.g}"><span><b>${esc(gname(x.g))}</b><em>${x.tr.length} traits · ${x.grp.size} groups · ${x.up} ▲ ${x.dn} ▼</em></span>${fp(x)}</button>`).join(""); return}
+    if(n.kind==="g"){const x=GS.get(n.g),tr=[...x.tr].sort((a,b)=>TT[a.t].grp-TT[b.t].grp||b.j-a.j);
+      S.innerHTML=`<button class="btn gbtn" data-back>Hub genes</button><button class="btn gbtn" data-pin="${tr.map(p=>p.t).join(",")}">Only these traits</button><h2><a class="gl" href="${link("g",gid(n.g))}">${esc(n.name)}</a></h2><p class="gsub">${x.tr.length} traits in ${x.grp.size} groups</p>`+
+        tr.map(p=>`<a class="grow" href="${link("p",TT[p.t].id,gid(n.g))}"><span>${arr(p.s)} ${esc(TT[p.t].name)}<em>${esc(GGRP[TT[p.t].grp][0])} · ${esc(TT[p.t].cohort)}</em>${x.odd.has(p.t)?`<em style="color:var(--ink)" data-tip="Usually the other way with: ${esc(x.odd.get(p.t).b.slice(0,6).map(t=>TT[t].name).join("; "))}${x.odd.get(p.t).b.length>6?" …":""}">≠ against ${x.odd.get(p.t).b.length} of ${x.odd.get(p.t).m} related traits (${x.odd.get(p.t).nb} by burden test)</em>`:""}</span><span class="num" style="color:var(--muted)">${p.j.toFixed(2)}</span></a>`).join("")}
+    else{const L=E.filter(p=>p.t===n.t).sort((a,b)=>b.j-a.j);
+      S.innerHTML=`<button class="btn gbtn" data-back>Hub genes</button><button class="btn gbtn" data-pin="${n.t}">Only this trait</button><h2><a class="gl" href="${link("t",TT[n.t].id)}">${esc(n.name)}</a></h2><p class="gsub">${esc(TT[n.t].cohort)} · ${esc(GGRP[n.grp][0])} · ${L.length} genes at this score</p>`+
+        L.slice(0,150).map(p=>`<a class="grow" href="${link("p",TT[n.t].id,gid(p.g))}"><span>${arr(p.s)} <b>${esc(gname(p.g))}</b></span><span class="num" style="color:var(--muted)">${p.j.toFixed(2)}</span></a>`).join("")}}
+  const pins=()=>{const a=[...st.pins]; $("#gpins").innerHTML=a.slice(0,6).map(t=>`<button class="gpin" data-t="${t}">${esc(TT[t].name)} <span style="color:var(--muted)">${esc(TT[t].cohort)}</span> ×</button>`).join("")+(a.length>6?`<span class="gpin" style="cursor:default;border-color:var(--rule)">and ${a.length-6} more</span>`:"")+(a.length?`<button class="gpin" data-t="all">Clear</button>`:"")};
+  const addPins=ts=>{ts.forEach(t=>st.pins.add(+t)); if(st.pins.size<3&&st.mn>1) setChip("#gmn","mn",1); pins(); build()};
+  const setChip=(id,key,v)=>{st[key]=v; $(id).querySelectorAll(".chip").forEach(x=>x.classList.toggle("on",String(x.dataset.v)===String(v)))};
+  const pick=ev=>{const r=cv.getBoundingClientRect(),x=(ev.clientX-r.left-W/2-tf.x)/tf.k,y=(ev.clientY-r.top-H/2-tf.y)/tf.k; let best=null,bd=1e9; for(const n of nodes){const d=Math.hypot(n.x-x,n.y-y)-n.r; if(d<bd){bd=d;best=n}} return best&&bd<5/tf.k?best:null};
+  const select=n=>{st.sel=n; side(); draw()};
+  for(const [id,key,conv] of [["#gth","th",Number],["#gmn","mn",Number],["#gun","unit",String]]) $(id).addEventListener("click",e=>{const b=e.target.closest("button"); if(!b) return; setChip(id,key,conv(b.dataset.v)); build()});
+  $("#ggr").addEventListener("click",e=>{const b=e.target.closest("button"); if(!b) return; const g=+b.dataset.g; st.grp.has(g)?st.grp.delete(g):st.grp.add(g); if(!st.grp.size) st.grp=new Set(GGRP.map((_,i)=>i)); $("#ggr").querySelectorAll(".chip").forEach(x=>x.classList.toggle("on",st.grp.has(+x.dataset.g))); build()});
+  $("#ggr").addEventListener("dblclick",e=>{const b=e.target.closest("button"); if(!b) return; st.grp=new Set([+b.dataset.g]); $("#ggr").querySelectorAll(".chip").forEach(x=>x.classList.toggle("on",st.grp.has(+x.dataset.g))); build()});
+  const ts=$("#gts"),sr=$("#gres"); ts.addEventListener("input",()=>{const q=ts.value.trim().toLowerCase(); if(q.length<2){sr.hidden=true;return} const m=TT.filter(t=>t.name.toLowerCase().includes(q)).slice(0,14); sr.hidden=!m.length; sr.innerHTML=m.map(t=>`<div data-t="${t.i}">${esc(t.name)} <em>${esc(t.cohort)}</em></div>`).join("")});
+  sr.addEventListener("click",e=>{const d=e.target.closest("div[data-t]"); if(!d) return; ts.value=""; sr.hidden=true; addPins([d.dataset.t])}); ts.addEventListener("blur",()=>setTimeout(()=>{sr.hidden=true},180));
+  $("#gpins").addEventListener("click",e=>{const p=e.target.closest("button[data-t]"); if(!p) return; p.dataset.t==="all"?st.pins.clear():st.pins.delete(+p.dataset.t); pins(); build()});
+  $("#gside").addEventListener("click",e=>{if(e.target.closest("[data-back]")) return select(null); const li=e.target.closest("[data-list]"); if(li){st.list=li.dataset.list; return side()} if(e.target.closest("[data-ob]")){st.ob=!st.ob; return side()} const pn=e.target.closest("[data-pin]"); if(pn) return addPins(pn.dataset.pin.split(","));
+    const g=e.target.closest("button[data-g]"); if(!g) return; let n=nodes.find(n=>n.kind==="g"&&n.g===+g.dataset.g); if(!n){st.extra.add(+g.dataset.g); build(); n=nodes.find(n=>n.kind==="g"&&n.g===+g.dataset.g)} if(n) select(n)});
+  let drag=null; cv.addEventListener("pointerdown",ev=>{drag={x:ev.clientX,y:ev.clientY,tx:tf.x,ty:tf.y,moved:false}; cv.setPointerCapture(ev.pointerId)});
+  cv.addEventListener("pointermove",ev=>{const tp=$("#tip"); if(drag){const dx=ev.clientX-drag.x,dy=ev.clientY-drag.y; if(Math.hypot(dx,dy)>4) drag.moved=true; if(drag.moved){tf.x=drag.tx+dx; tf.y=drag.ty+dy; tp.hidden=true; draw()} return}
+    const n=pick(ev); cv.classList.toggle("pt",!!n); if(n!==st.hov){st.hov=n; draw()} if(!n){tp.hidden=true;return}
+    if(n.kind==="g"){const x=GS.get(n.g); tp.innerHTML=`<b>${esc(n.name)}</b><br>${x.tr.length} traits in ${x.grp.size} groups<br>${x.up} raised, ${x.dn} lowered`} else tp.innerHTML=`<b>${esc(n.name)}</b><br>${esc(TT[n.t].cohort)} · ${esc(GGRP[n.grp][0])}<br>${n.deg} genes shown`; tp.hidden=false});
+  cv.addEventListener("pointerup",ev=>{const d=drag; drag=null; if(d&&!d.moved) select(pick(ev))}); cv.addEventListener("pointerleave",()=>{if(st.hov){st.hov=null; draw()} $("#tip").hidden=true});
+  const zoom=(f,cx=0,cy=0)=>{const k=Math.min(8,Math.max(.5,tf.k*f)),q=k/tf.k; tf.x=cx-(cx-tf.x)*q; tf.y=cy-(cy-tf.y)*q; tf.k=k; draw()};
+  cv.addEventListener("wheel",ev=>{if(!(ev.ctrlKey||ev.metaKey)) return; ev.preventDefault(); const r=cv.getBoundingClientRect(); zoom(Math.exp(-ev.deltaY*.01),ev.clientX-r.left-W/2,ev.clientY-r.top-H/2)},{passive:false});
+  document.querySelector(".gzoom").addEventListener("click",e=>{const b=e.target.closest("button"); if(!b) return; +b.dataset.z?zoom(+b.dataset.z):(tf={x:0,y:0,k:1},draw())});
+  const onRes=()=>{if(!document.body.contains(cv)) return removeEventListener("resize",onRes); size(); build()}; addEventListener("resize",onRes);
+  size(); pins(); build()}
 function route(){const h=decodeURIComponent(location.hash.slice(1)); window.scrollTo(0,0); $("#tip").hidden=true;
   if(h==="about") return aboutPage();
+  if(h==="graph") return graphPage();
   if(h.startsWith("t_")&&tIdx.has(h.slice(2))) return traitPage(tIdx.get(h.slice(2)));
   if(h.startsWith("g_")&&gIdx.has(h.slice(2))) return genePage(gIdx.get(h.slice(2)));
   if(h.startsWith("p_")){const [tt,gg]=h.slice(2).split("~"); if(tIdx.has(tt)&&gIdx.has(gg)) return pairPage(tIdx.get(tt),gIdx.get(gg))}
