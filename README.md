@@ -16,7 +16,7 @@ then visit http://localhost:8000.
 |---|---|
 | Cohorts | Pan-UKB (158 traits), FinnGen R12 (194 endpoints), a batch of 88 Open Targets studies (GWAS Catalog and FinnGen R12) |
 | Calls | 34,714 gene–trait pairs at qualifying loci (credible-set lead p < 5×10⁻⁸, minor allele frequency ≥ 1%) with P(wrong) ≤ 30%; traits without such a call are left out |
-| Pages | Gene–trait (the call, each source's evidence and its top features, gene-burden test, other cohorts, causal genes at the locus), trait (all genes with a call, ranked by P(causal) × P(right), genes at one locus folded together), gene (all traits, drugs, function), Graph (traits on a ring, genes placed among the traits they are called for; hub genes and calls that run against a gene's related traits), About (accuracy figures) |
+| Pages | Gene–trait (the call, each source's evidence and its top features, gene-burden test, other cohorts, causal genes at the locus), trait (all genes with a call, ranked by P(causal) × P(right), genes at one locus folded together), gene (all traits, drugs, function), Graph (traits on a ring, genes placed among the traits they are called for; hub genes, direction outliers, mixed-benefit genes, and genes with the same or the opposite pattern as a selected gene), About (accuracy figures) |
 
 ## Files
 
