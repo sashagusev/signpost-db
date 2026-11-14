@@ -247,7 +247,7 @@ const fw=v=>v==null?"–":v<.05?"<5%":pct(v);   // chance wrong: below 5% is sho
 const sci=v=>{if(v==null) return "–"; if(v===0) return "< 10⁻³⁰⁰"; if(v>=1e-3) return v.toPrecision(2); const e=Math.floor(Math.log10(v)), m=v/10**e, SUP={"-":"⁻",0:"⁰",1:"¹",2:"²",3:"³",4:"⁴",5:"⁵",6:"⁶",7:"⁷",8:"⁸",9:"⁹"}; return `${m.toFixed(1).replace(/\.0$/,"")}×10${String(e).split("").map(c=>SUP[c]).join("")}`};
 const obs=pw=>{for(const [t,o] of OBS) if(pw<=t) return o; return "about 45%"};
 const P=a=>({t:a[0],g:a[1],s:a[2],pw:a[3],src:a[4],pc:a[5],loc:a[6],cls:a[7],sig:a[8],ev:a[9].map(v=>v==null?[null,null]:[Math.sign(v),Math.abs(v)/1000]),bu:a[10]==null?null:[Math.sign(a[10]),Math.abs(a[10])/1000],tr:a[11]==null?null:[Math.sign(a[11]),Math.abs(a[11])/1000],sh:null});
-const BUILD="2026-11-14c";   // cache-busting for the data files: trait indices change between builds, so a stale shard would not match core.json
+const BUILD="2026-11-14d";   // cache-busting for the data files: trait indices change between builds, so a stale shard would not match core.json
 const DET={}; const loadDetail=t=>DET[t%D.nshard]||(DET[t%D.nshard]=(async()=>{const f=q=>fetch(`d/${String(t%D.nshard).padStart(2,"0")}.json?v=${BUILD}${q}`,{cache:q?"no-store":"default"}).then(r=>r.ok?r.json():null).catch(()=>null);
   let S=await f(""); if(S&&D.build&&S.build!==D.build) S=await f("&r="+Date.now());   // shard from another build than core.json (stale cache): refetch bypassing the cache
   if(S&&D.build&&S.build!==D.build&&!sessionStorage.getItem("sp-reloaded")){sessionStorage.setItem("sp-reloaded","1"); location.reload(); return null}   // still mismatched: the page itself is stale, reload once
@@ -301,7 +301,7 @@ function aboutPage(){
     <dt>P(wrong)</dt><dd>The chance the direction is wrong, calibrated against gene-burden tests. Values below 5% are shown as &lt;5%.</dd>
     <dt>P(causal)</dt><dd>The chance the gene is the one acting at its locus, shared among nearby protein-coding genes, from distance, enhancer–gene links, credible-set position and gene annotations, learned at loci where a coding variant names the gene.</dd>
     <dt>Other traits</dt><dd>When a gene's direction is known for one trait, from a gene-burden test or a fine-mapped coding variant, a fine-mapped variant shared with a genetically correlated trait carries that direction over.</dd>
-    <dt>Loci</dt><dd>Only credible sets whose lead variant has p &lt; 5×10⁻⁸ and minor allele frequency ≥ 1%.</dd>
+    <dt>Loci</dt><dd>Only credible sets whose lead variant has p &lt; 5×10⁻⁸ and minor allele frequency ≥ 1%. The accuracy and drug-target figures use common regulatory loci: those where the gene has no coding variant in a credible set at PIP ≥ 0.1.</dd>
     <dt>Cohorts</dt><dd>${(n=>`Pan-UKB (${n("Pan-UKB")} traits), FinnGen R12 (${n("FinnGen")} endpoints) and a batch of ${n("Open Targets")} Open Targets studies`)(c=>D.traits.filter(T=>T.cohort===c).length)}, each with at least one call at 30% chance wrong or better. All of Us is used only to check accuracy.</dd>
   </dl></section>
   <section class="sec row full"><h2>Accuracy for gene-trait sign prediction across three cohorts</h2>
