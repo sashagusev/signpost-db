@@ -247,7 +247,7 @@ const fw=v=>v==null?"–":v<.05?"<5%":pct(v);   // chance wrong: below 5% is sho
 const sci=v=>{if(v==null) return "–"; if(v===0) return "< 10⁻³⁰⁰"; if(v>=1e-3) return v.toPrecision(2); const e=Math.floor(Math.log10(v)), m=v/10**e, SUP={"-":"⁻",0:"⁰",1:"¹",2:"²",3:"³",4:"⁴",5:"⁵",6:"⁶",7:"⁷",8:"⁸",9:"⁹"}; return `${m.toFixed(1).replace(/\.0$/,"")}×10${String(e).split("").map(c=>SUP[c]).join("")}`};
 const obs=pw=>{for(const [t,o] of OBS) if(pw<=t) return o; return "about 45%"};
 const P=a=>({t:a[0],g:a[1],s:a[2],pw:a[3],src:a[4],pc:a[5],loc:a[6],cls:a[7],sig:a[8],ev:a[9].map(v=>v==null?[null,null]:[Math.sign(v),Math.abs(v)/1000]),bu:a[10]==null?null:[Math.sign(a[10]),Math.abs(a[10])/1000],tr:a[11]==null?null:[Math.sign(a[11]),Math.abs(a[11])/1000],sh:null});
-const BUILD="2026-11-14a";   // cache-busting for the data files: trait indices change between builds, so a stale shard would not match core.json
+const BUILD="2026-11-14b";   // cache-busting for the data files: trait indices change between builds, so a stale shard would not match core.json
 const DET={}; const loadDetail=t=>DET[t%D.nshard]||(DET[t%D.nshard]=(async()=>{const f=q=>fetch(`d/${String(t%D.nshard).padStart(2,"0")}.json?v=${BUILD}${q}`,{cache:q?"no-store":"default"}).then(r=>r.ok?r.json():null).catch(()=>null);
   let S=await f(""); if(S&&D.build&&S.build!==D.build) S=await f("&r="+Date.now());   // shard from another build than core.json (stale cache): refetch bypassing the cache
   if(S&&D.build&&S.build!==D.build&&!sessionStorage.getItem("sp-reloaded")){sessionStorage.setItem("sp-reloaded","1"); location.reload(); return null}   // still mismatched: the page itself is stale, reload once
@@ -317,7 +317,7 @@ function aboutPage(){
     <div class="fig pair"><div><div class="kicker">Calibration</div><div id="calc"></div></div><div><div class="kicker">Carried over from other traits</div><div id="trc"></div></div></div></section>
   <section class="sec row"><div class="rt"><h2>Causal gene ranking at burden-gene loci</h2>
     <p class="note">Loci holding a gene with a significant gene-burden result: how often P(causal) ranks that gene near the top.</p>
-    <div class="ctl"><span class="tabs" id="cvt"><button class="chip on" data-v="rank">Rank</button><button class="chip" data-v="cal">Calibration</button></span><span class="tabs" id="cct"><button class="chip on" data-v="Pan-UKB">Pan-UKB</button><button class="chip" data-v="FinnGen">FinnGen</button></span></div><p class="cap" id="causcap"></p></div>
+    <div class="ctl"><span class="tabs" id="cvt"><button class="chip on" data-v="rank">Rank</button><button class="chip" data-v="cal">Calibration</button></span><span class="tabs" id="cct"><button class="chip on" data-v="Pan-UKB">Pan-UKB</button><button class="chip" data-v="FinnGen">FinnGen</button><button class="chip" data-v="All of Us">All of Us</button></span></div><p class="cap" id="causcap"></p></div>
     <div class="fig"><div id="causc"></div></div></section>
   <section class="sec row"><div class="rt"><h2>Drug target consistency with predicted sign</h2>
     <p class="note">Balanced accuracy of the predicted direction against each drug's action on its indication, averaged over activators and inhibitors, with targets ranked by P(causal) × P(right).</p>
@@ -371,7 +371,7 @@ function aboutPage(){
         lineChart($("#causc"),{label:"Burden gene rank",W:700,mr:112,h:360,xd:[1,15],yd:[0,1],xt:[1,3,5,10,15],yt:[0,.2,.4,.6,.8,1],fx:v=>"top "+v,fy:pc0,xl:"Candidate genes considered at each locus (ranked)",yl:"% of loci with the burden gene in the top k",
           series:[mk("pc","P(causal)","--c-min",3),mk("near","Nearest gene","--c-cd",2),mk("pg","rE2G link alone","--c-tw",2),mk("rand","Random order","--faint",1.5,true)],
           head:xv=>`Top ${Math.round(xv)} candidates`,row:(se,i)=>`<span style="color:var(${se.c})">●</span> ${esc(se.name)}: ${pc0(se.y[i])} of loci`});
-        $("#causcap").textContent=`${C.loci.toLocaleString()} loci, median ${C.cand_median} protein-coding candidates per locus.${cc==="FinnGen"?" FinnGen uses the Pan-UKB coefficients; few loci, so the curves are noisy.":""}`}
+        $("#causcap").textContent=`${C.loci.toLocaleString()} loci, median ${C.cand_median} protein-coding candidates per locus.${cc==="FinnGen"?" Few loci, so the curves are noisy.":cc==="All of Us"?" Scored with the model trained on Pan-UKB and FinnGen.":""}`}
       else{const s0={name:"P(causal)",c:"--c-min",w:3,pts:true,x:C.cal.map(r=>r.pred),y:C.cal.map(r=>r.obs),n:C.cal.map(r=>r.n)};
         lineChart($("#causc"),{label:"P(causal) calibration",W:700,mr:112,h:360,xd:[0,1],yd:[0,1],xt:[0,.2,.4,.6,.8,1],yt:[0,.2,.4,.6,.8,1],fx:pc0,fy:pc0,diag:"perfect calibration",xl:"Predicted P(causal), binned",yl:"Observed share that are burden genes",
           series:[s0],head:()=>"Bin",row:(se,i)=>`Predicted ${pc0(se.x[i])}, observed ${pc0(se.y[i])} · ${se.n[i].toLocaleString()} candidates`});
